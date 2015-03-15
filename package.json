@@ -1,0 +1,10 @@
+{
+  "name": "thesis",
+  "private": true,
+  "scripts": {
+  },
+  "dependencies": {
+    "request": "",
+    "cheerio": ""
+  }
+}
