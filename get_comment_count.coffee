@@ -56,8 +56,6 @@ parseSinglePage = (symbol, page, lastEntryDate, executionDate, callback) ->
 symbolList = do ->
   JSON.parse fs.readFileSync('sse_50.json', 'ascii')
 
-symbolList = symbolList[..3]
-
 executionDate = moment()
 
 parseSingleSymbol = (symbol, callback) ->
