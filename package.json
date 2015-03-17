@@ -6,6 +6,8 @@
   "dependencies": {
     "request": "",
     "cheerio": "",
-    "redis": ""
+    "redis": "",
+    "debug": "",
+    "moment": ""
   }
 }
