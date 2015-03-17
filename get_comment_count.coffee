@@ -27,10 +27,10 @@ parseSinglePage = (symbol, page, lastEntryDate, executionDate, callback) ->
         readCount = parseInt parsed.children('.l1').text()
         commentCount = parseInt parsed.children('.l2').text()
         createDate = moment parsed.children('.l6').text(), 'MM-DD'
-        if isNaN targetId
-          # Skip global broadcasts
+        if targetId != symbol
+          # Skip global broadcasts and wrong entries
           true
-        else if targetId != symbol or isNaN(threadId) or isNaN(readCount) or isNaN(commentCount) or not createDate.isValid()
+        else if isNaN(threadId) or isNaN(readCount) or isNaN(commentCount) or not createDate.isValid()
           throw new Error("symbol #{symbol} page #{page} has an invalid entry: #{parsed.text()}")
           true
         else
