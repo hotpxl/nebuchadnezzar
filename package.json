@@ -1,13 +1,13 @@
 {
   "name": "thesis",
   "private": true,
-  "scripts": {
-  },
+  "scripts": {},
   "dependencies": {
-    "request": "",
     "cheerio": "",
-    "redis": "",
     "debug": "",
-    "moment": ""
+    "moment": "",
+    "redis": "",
+    "request": "",
+    "winston": "^0.9.0"
   }
 }
