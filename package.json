@@ -5,6 +5,7 @@
   },
   "dependencies": {
     "request": "",
-    "cheerio": ""
+    "cheerio": "",
+    "redis": ""
   }
 }
