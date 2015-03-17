@@ -1,6 +1,8 @@
+fs = require 'fs'
 request = require 'request'
 cherrio = require 'cheerio'
 moment = require 'moment'
+_ = require 'lodash'
 redis = require('redis').createClient()
 debug = require('debug') 'getCommentCount'
 
@@ -51,16 +53,18 @@ parseSinglePage = (symbol, page, lastEntryDate, executionDate, callback) ->
       else
         callback()
 
-parseSinglePage 600000, 1, moment(), moment(), ->
-  redis.quit()
+symbolList = do ->
+  JSON.parse fs.readFileSync('sse_50.json', 'ascii')
 
-# request 'http://www.sse.com.cn/market/sseindex/indexlist/s/i000010/const_list.shtml', (err, response, body) ->
-#   if not err and response.statusCode == 200
-#     ret = []
-#     html = cherrio.load body
-#     for i in html('.table3')
-#       ret.push /\d{6}/.exec(i.children[0]?.children[0].data)?[0]
-#     ret = ret.filter (i) -> i?
-#     console.log JSON.stringify(ret)
-#   else
-#     console.log err
+symbolList = symbolList[..3]
+
+executionDate = moment()
+
+parseSingleSymbol = (symbol, callback) ->
+  parseSinglePage symbol, 1, executionDate, executionDate, callback
+
+_.map symbolList, (i) ->
+  parseSingleSymbol parseInt(i), ->
+    if ++finished == symbolList.length
+      redis.quit()
+
