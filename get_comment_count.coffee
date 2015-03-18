@@ -54,7 +54,7 @@ parseSinglePage = (symbol, page, lastEntryDate, executionDate, callback) ->
         createDate = entry.createDate
         # Set correct year of entry
         createDate.year lastEntryDate.year()
-        if not createDate.isValid()  or Math.abs(createDate.diff(lastEntryDate, 'days')) != 0
+        if not createDate.isValid() or Math.abs(createDate.diff(lastEntryDate, 'days')) != 0
           request "http://guba.eastmoney.com/#{threadUrl}", (error, response, body) ->
             if error or response.statusCode != 200
               throw (error ? response)
