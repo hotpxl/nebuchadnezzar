@@ -36,7 +36,7 @@ parseSinglePage = (symbol, page, lastEntryDate, executionDate, callback) ->
         if targetId != symbol
           # Skip global broadcasts and wrong entries
           true
-        else if isNaN(threadId) or isNaN(readCount) or isNaN(commentCount) or not createDate.isValid()
+        else if isNaN(threadId) or isNaN(readCount) or isNaN(commentCount)
           throw new Error("symbol #{symbol} page #{page} has an invalid entry: #{parsed.text()}")
         else
           entries.push
@@ -54,7 +54,7 @@ parseSinglePage = (symbol, page, lastEntryDate, executionDate, callback) ->
         createDate = entry.createDate
         # Set correct year of entry
         createDate.year lastEntryDate.year()
-        if Math.abs(createDate.diff(lastEntryDate, 'days')) != 0
+        if not createDate.isValid()  or Math.abs(createDate.diff(lastEntryDate, 'days')) != 0
           request "http://guba.eastmoney.com/#{threadUrl}", (error, response, body) ->
             if error or response.statusCode != 200
               throw (error ? response)
@@ -80,6 +80,7 @@ parseSinglePage = (symbol, page, lastEntryDate, executionDate, callback) ->
         if err
           throw err
         # Process next page
+        redis.hset 'progress', symbol, page
         if page < maxPageNum
           parseSinglePage symbol, page + 1, lastEntryDate, executionDate, callback
         else
