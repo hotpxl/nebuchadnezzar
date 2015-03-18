@@ -8,6 +8,7 @@
     "moment": "",
     "redis": "",
     "request": "",
-    "lodash": ""
+    "lodash": "",
+    "async": ""
   }
 }

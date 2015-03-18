@@ -2,6 +2,7 @@ fs = require 'fs'
 request = require 'request'
 cherrio = require 'cheerio'
 moment = require 'moment'
+async = require 'async'
 _ = require 'lodash'
 redis = require('redis').createClient()
 debug = require('debug') 'getCommentCount'
@@ -21,9 +22,12 @@ parseSinglePage = (symbol, page, lastEntryDate, executionDate, callback) ->
       throw (error ? response)
     else
       html = cherrio.load body
+      maxPageNum = getPageCount html
+      entries = []
       html('.articleh').each (index, elem) ->
         parsed = cherrio(elem)
-        [_, targetId, threadId] = parsed.children('.l3').children('a').attr('href').split /[,.]/
+        threadUrl = parsed.children('.l3').children('a').attr 'href'
+        [_, targetId, threadId] = threadUrl.split /[,.]/
         targetId = parseInt targetId
         threadId = parseInt threadId
         readCount = parseInt parsed.children('.l1').text()
@@ -34,24 +38,52 @@ parseSinglePage = (symbol, page, lastEntryDate, executionDate, callback) ->
           true
         else if isNaN(threadId) or isNaN(readCount) or isNaN(commentCount) or not createDate.isValid()
           throw new Error("symbol #{symbol} page #{page} has an invalid entry: #{parsed.text()}")
-          true
         else
-          # Set correct year of entry
-          createDate.year lastEntryDate.year()
-          if createDate.isAfter lastEntryDate
-            createDate.year createDate.year() - 1
-          lastEntryDate = createDate
+          entries.push
+            threadUrl: threadUrl
+            threadId: threadId
+            readCount: readCount
+            commentCount: commentCount
+            createDate: createDate
+          true
+      async.reduce entries, lastEntryDate, (lastEntryDate, entry, callback) ->
+        threadUrl = entry.threadUrl
+        threadId = entry.threadId
+        readCount = entry.readCount
+        commentCount = entry.commentCount
+        createDate = entry.createDate
+        # Set correct year of entry
+        createDate.year lastEntryDate.year()
+        if Math.abs(createDate.diff(lastEntryDate, 'days')) != 0
+          request "http://guba.eastmoney.com/#{threadUrl}", (error, response, body) ->
+            if error or response.statusCode != 200
+              throw (error ? response)
+            else
+              html = cherrio.load body
+              [match] = /\d{4}-\d{2}-\d{2}/.exec html('.zwfbtime').text()
+              createDate = moment match, 'YYYY-MM-DD'
+              debug "date change from #{lastEntryDate.format 'YYYY-MM-DD'} to #{createDate.format 'YYYY-MM-DD'}"
+              payload =
+                threadId: threadId
+                readCount: readCount
+                createDate: createDate.format 'YYYY-MM-DD'
+              redis.set "#{executionDate.format('YYYY-MM-DD')}:#{symbol}:#{threadId}", JSON.stringify(payload)
+              callback null, createDate
+        else
           payload =
             threadId: threadId
             readCount: readCount
             createDate: createDate.format 'YYYY-MM-DD'
           redis.set "#{executionDate.format('YYYY-MM-DD')}:#{symbol}:#{threadId}", JSON.stringify(payload)
-          true
-      # Process next page
-      if page < getPageCount html
-        parseSinglePage symbol, page + 1, lastEntryDate, executionDate, callback
-      else
-        callback()
+          callback null, createDate
+      , (err, lastEntryDate) ->
+        if err
+          throw err
+        # Process next page
+        if page < maxPageNum
+          parseSinglePage symbol, page + 1, lastEntryDate, executionDate, callback
+        else
+          callback()
 
 symbolList = do ->
   JSON.parse fs.readFileSync('sse_50.json', 'ascii')
