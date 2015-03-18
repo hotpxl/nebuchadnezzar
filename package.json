@@ -1,7 +1,9 @@
 {
   "name": "thesis",
   "private": true,
-  "scripts": {},
+  "scripts": {
+    "start": "DEBUG=* coffee get_comment_count.coffee"
+  },
   "dependencies": {
     "cheerio": "",
     "debug": "",
