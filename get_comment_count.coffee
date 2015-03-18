@@ -91,11 +91,16 @@ symbolList = do ->
 
 executionDate = moment()
 
-parseSingleSymbol = (symbol, callback) ->
-  parseSinglePage symbol, 1, executionDate, executionDate, callback
+parseSingleSymbol = (symbol, start, callback) ->
+  debug "symbol #{symbol} starting from page #{start}"
+  parseSinglePage symbol, start, executionDate, executionDate, callback
 
-_.map symbolList, (i) ->
-  parseSingleSymbol parseInt(i), ->
-    if ++finished == symbolList.length
-      redis.quit()
+redis.hgetall 'progress', (err, obj) ->
+  if err
+    throw err
+  _.map symbolList, (i) ->
+    start = parseInt obj?[i] ? 1
+    parseSingleSymbol parseInt(i), start, ->
+      if ++finished == symbolList.length
+        redis.quit()
 
