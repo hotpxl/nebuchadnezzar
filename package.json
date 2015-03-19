@@ -12,6 +12,7 @@
     "lodash": "",
     "moment": "",
     "redis": "",
-    "request": ""
+    "request": "",
+    "fs-extra": ""
   }
 }
