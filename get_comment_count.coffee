@@ -81,7 +81,7 @@ parseSinglePage = (symbol, page, lastEntryDate, executionDate, redis, callback) 
         # Process next page
         redis.hset 'progress', symbol, page
         if page < maxPageNum
-          parseSinglePage symbol, page + 1, lastEntryDate, executionDate, callback
+          parseSinglePage symbol, page + 1, lastEntryDate, executionDate, redis, callback
         else
           callback()
 
