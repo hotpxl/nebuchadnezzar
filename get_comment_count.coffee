@@ -89,13 +89,14 @@ parseSinglePage = (symbol, page, lastEntryDate, executionDate, callback) ->
 symbolList = do ->
   JSON.parse fs.readFileSync('sse_50.json', 'ascii')
 
-executionDate = moment()
+executionDate = moment('2015-03-18')
 
 parseSingleSymbol = (symbol, start, callback) ->
   debug "symbol #{symbol} starting from page #{start}"
   parseSinglePage symbol, start, executionDate, executionDate, callback
 
 redis.hgetall 'progress', (err, obj) ->
+  finished = 0
   if err
     throw err
   _.map symbolList, (i) ->
