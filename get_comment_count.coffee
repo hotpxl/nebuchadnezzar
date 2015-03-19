@@ -7,6 +7,8 @@ _ = require 'lodash'
 redis = require('redis').createClient()
 debug = require('debug') 'getCommentCount'
 
+redis.auth 'whatever'
+
 makeUrl = (symbol, page) ->
   "http://guba.eastmoney.com/list,#{symbol},f_#{page}.html"
 
@@ -89,7 +91,7 @@ parseSinglePage = (symbol, page, lastEntryDate, executionDate, callback) ->
 symbolList = do ->
   JSON.parse fs.readFileSync('sse_50.json', 'ascii')
 
-executionDate = moment('2015-03-18')
+executionDate = moment()
 
 parseSingleSymbol = (symbol, start, callback) ->
   debug "symbol #{symbol} starting from page #{start}"
