@@ -85,7 +85,7 @@ parseSinglePage = (symbol, page, lastEntryDate, executionDate, redis, callback) 
         else
           callback()
 
-parseSingleSymbol = (symbol, start, redis, callback) ->
+parseSingleSymbol = (symbol, start, executionDate, redis, callback) ->
   debug "symbol #{symbol} starting from page #{start}"
   parseSinglePage symbol, start, executionDate, executionDate, redis, callback
 
@@ -98,6 +98,6 @@ exports.f = f = (date, redis, callback) ->
     finished = 0
     _.map symbolList, (i) ->
       start = parseInt obj?[i] ? 1
-      parseSingleSymbol parseInt(i), start, redis, ->
+      parseSingleSymbol parseInt(i), start, executionDate, redis, ->
         if ++finished == symbolList.length
           callback()
