@@ -2,7 +2,7 @@
   "name": "thesis",
   "private": true,
   "scripts": {
-    "start": "DEBUG=* coffee get_comment_count.coffee"
+    "start": "DEBUG=* coffee main.coffee"
   },
   "dependencies": {
     "async": "",

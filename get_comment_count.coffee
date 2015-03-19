@@ -4,10 +4,7 @@ cherrio = require 'cheerio'
 moment = require 'moment'
 async = require 'async'
 _ = require 'lodash'
-redis = require('redis').createClient()
 debug = require('debug') 'getCommentCount'
-
-redis.auth 'whatever'
 
 makeUrl = (symbol, page) ->
   "http://guba.eastmoney.com/list,#{symbol},f_#{page}.html"
@@ -16,7 +13,7 @@ getPageCount = (html) ->
   match = /',(\d+),(\d+),/.exec html('script', '.pagernums').text()
   Math.ceil(parseInt(match[1]) / parseInt(match[2]))
 
-parseSinglePage = (symbol, page, lastEntryDate, executionDate, callback) ->
+parseSinglePage = (symbol, page, lastEntryDate, executionDate, redis, callback) ->
   debug "processing page #{page} of symbol #{symbol}"
   url = makeUrl symbol, page
   request url, (error, response, body) ->
@@ -29,7 +26,7 @@ parseSinglePage = (symbol, page, lastEntryDate, executionDate, callback) ->
       html('.articleh').each (index, elem) ->
         parsed = cherrio(elem)
         threadUrl = parsed.children('.l3').children('a').attr 'href'
-        [_, targetId, threadId] = threadUrl.split /[,.]/
+        [_news, targetId, threadId] = threadUrl.split /[,.]/
         targetId = parseInt targetId
         threadId = parseInt threadId
         readCount = parseInt parsed.children('.l1').text()
@@ -88,22 +85,19 @@ parseSinglePage = (symbol, page, lastEntryDate, executionDate, callback) ->
         else
           callback()
 
-symbolList = do ->
-  JSON.parse fs.readFileSync('sse_50.json', 'ascii')
-
-executionDate = moment()
-
-parseSingleSymbol = (symbol, start, callback) ->
+parseSingleSymbol = (symbol, start, redis, callback) ->
   debug "symbol #{symbol} starting from page #{start}"
-  parseSinglePage symbol, start, executionDate, executionDate, callback
+  parseSinglePage symbol, start, executionDate, executionDate, redis, callback
 
-redis.hgetall 'progress', (err, obj) ->
-  finished = 0
-  if err
-    throw err
-  _.map symbolList, (i) ->
-    start = parseInt obj?[i] ? 1
-    parseSingleSymbol parseInt(i), start, ->
-      if ++finished == symbolList.length
-        redis.quit()
-
+exports.f = f = (date, redis, callback) ->
+  symbolList = do ->
+    JSON.parse fs.readFileSync('sse_50.json', 'ascii')
+  executionDate = date
+  redis.hgetall 'progress', (err, obj) ->
+    throw err if err?
+    finished = 0
+    _.map symbolList, (i) ->
+      start = parseInt obj?[i] ? 1
+      parseSingleSymbol parseInt(i), start, redis, ->
+        if ++finished == symbolList.length
+          callback()

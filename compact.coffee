@@ -3,7 +3,7 @@ fs = require 'fs-extra'
 moment = require 'moment'
 debug = require('debug') 'compact'
 
-exports.f = f = (date, redis) ->
+exports.f = f = (date, redis, callback) ->
   redis.keys '*', (err, res) ->
     throw err if err?
     accumulator = {}
@@ -33,6 +33,8 @@ exports.f = f = (date, redis) ->
       fs.copySync 'dump.rdb', "#{date.format 'YYYY-MM-DD'}.rdb"
       redis.flushall()
       debug 'compact finish'
+      callback()
 
 if require.main == module
-  f moment(), require('redis').createClient()
+  f moment(), require('redis').createClient(), ->
+    true
