@@ -5,12 +5,13 @@
     "start": "DEBUG=* coffee get_comment_count.coffee"
   },
   "dependencies": {
+    "async": "",
     "cheerio": "",
     "debug": "",
+    "hiredis": "^0.2.0",
+    "lodash": "",
     "moment": "",
     "redis": "",
-    "request": "",
-    "lodash": "",
-    "async": ""
+    "request": ""
   }
 }

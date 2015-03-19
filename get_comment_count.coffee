@@ -66,15 +66,15 @@ parseSinglePage = (symbol, page, lastEntryDate, executionDate, callback) ->
               createDate = moment match, 'YYYY-MM-DD'
               debug "date change from #{lastEntryDate.format 'YYYY-MM-DD'} to #{createDate.format 'YYYY-MM-DD'}"
               payload =
-                threadId: threadId
                 readCount: readCount
+                commentCount: commentCount
                 createDate: createDate.format 'YYYY-MM-DD'
               redis.set "#{executionDate.format('YYYY-MM-DD')}:#{symbol}:#{threadId}", JSON.stringify(payload)
               callback null, createDate
         else
           payload =
-            threadId: threadId
             readCount: readCount
+            commentCount: commentCount
             createDate: createDate.format 'YYYY-MM-DD'
           redis.set "#{executionDate.format('YYYY-MM-DD')}:#{symbol}:#{threadId}", JSON.stringify(payload)
           callback null, createDate
