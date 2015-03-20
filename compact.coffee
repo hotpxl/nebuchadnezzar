@@ -28,12 +28,14 @@ exports.f = f = (date, redis, callback) ->
           callback()
     , (err) ->
       throw err if err?
-      redis.save()
-      fs.writeFileSync "#{date.format 'YYYY-MM-DD'}.json", JSON.stringify(accumulator)
-      fs.copySync 'dump.rdb', "#{date.format 'YYYY-MM-DD'}.rdb"
-      redis.flushall()
-      debug 'compact finish'
-      callback()
+      redis.save (err) ->
+        throw err if err?
+        fs.writeFileSync "#{date.format 'YYYY-MM-DD'}.json", JSON.stringify(accumulator)
+        fs.copySync 'dump.rdb', "#{date.format 'YYYY-MM-DD'}.rdb"
+        debug 'compact finish'
+        redis.flushall (err) ->
+          throw err if err?
+          callback()
 
 if require.main == module
   f moment(), require('redis').createClient(), ->
