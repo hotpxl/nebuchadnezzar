@@ -53,7 +53,16 @@ parseSinglePage = (symbol, page, lastEntryDate, executionDate, redis, callback) 
         createDate = entry.createDate
         # Set correct year of entry
         createDate.year lastEntryDate.year()
-        if not createDate.isValid() or Math.abs(createDate.diff(lastEntryDate, 'days')) != 0
+        storePayload = (createDate) ->
+          payload =
+            readCount: readCount
+            commentCount: commentCount
+            createDate: createDate.format 'YYYY-MM-DD'
+          redis.set "#{executionDate.format('YYYY-MM-DD')}:#{symbol}:#{threadId}", JSON.stringify(payload)
+          callback null, createDate
+        if createDate.isValid() and -1 <= createDate.diff(lastEntryDate, 'days') <= 0
+          storePayload createDate
+        else
           request "http://guba.eastmoney.com/#{threadUrl}", (error, response, body) ->
             if error or response.statusCode != 200
               throw (error ? response)
@@ -62,22 +71,9 @@ parseSinglePage = (symbol, page, lastEntryDate, executionDate, redis, callback) 
               [match] = /\d{4}-\d{2}-\d{2}/.exec html('.zwfbtime').text()
               createDate = moment match, 'YYYY-MM-DD'
               debug "date change from #{lastEntryDate.format 'YYYY-MM-DD'} to #{createDate.format 'YYYY-MM-DD'}"
-              payload =
-                readCount: readCount
-                commentCount: commentCount
-                createDate: createDate.format 'YYYY-MM-DD'
-              redis.set "#{executionDate.format('YYYY-MM-DD')}:#{symbol}:#{threadId}", JSON.stringify(payload)
-              callback null, createDate
-        else
-          payload =
-            readCount: readCount
-            commentCount: commentCount
-            createDate: createDate.format 'YYYY-MM-DD'
-          redis.set "#{executionDate.format('YYYY-MM-DD')}:#{symbol}:#{threadId}", JSON.stringify(payload)
-          callback null, createDate
+              storePayload createDate
       , (err, lastEntryDate) ->
-        if err
-          throw err
+        throw err if err?
         # Process next page
         redis.hset 'progress', symbol, page
         if page < maxPageNum
