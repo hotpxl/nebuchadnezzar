@@ -70,7 +70,7 @@ parseSinglePage = (symbol, page, lastEntryDate, executionDate, redis, callback) 
               html = cherrio.load body
               [match] = /\d{4}-\d{2}-\d{2}/.exec html('.zwfbtime').text()
               createDate = moment match, 'YYYY-MM-DD'
-              debug "date jumped from #{lastEntryDate.format 'YYYY-MM-DD'} to #{createDate.format 'YYYY-MM-DD'}"
+              debug "date jumped for #{symbol} on #{page} from #{lastEntryDate.format 'YYYY-MM-DD'} to #{createDate.format 'YYYY-MM-DD'}"
               storePayload createDate
       , (err, lastEntryDate) ->
         throw err if err?
