@@ -1,3 +1,4 @@
+#!/usr/bin/env coffee
 yargs = require 'yargs'
   .demand ['d', 's']
   .alias 'd', 'date'
