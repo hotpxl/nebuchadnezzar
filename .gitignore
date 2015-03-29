@@ -29,3 +29,5 @@ node_modules
 
 # Custom
 *.swp
+*.json
+*.csv

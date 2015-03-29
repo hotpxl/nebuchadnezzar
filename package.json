@@ -13,6 +13,7 @@
     "moment": "",
     "redis": "",
     "request": "",
-    "fs-extra": ""
+    "fs-extra": "",
+    "yargs": ""
   }
 }
