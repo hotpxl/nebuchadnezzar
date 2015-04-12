@@ -29,9 +29,4 @@ node_modules
 
 # Custom
 *.swp
-*.json
-!package.json
-!data/**/*
-*.csv
-*.txt
 tmp

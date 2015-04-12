@@ -1,0 +1,34 @@
+#!/usr/bin/env coffee
+_ = require 'lodash'
+async = require 'async'
+index = require '../data/sse_50.json'
+parser = require '../parser'
+fs = require 'fs'
+moment = require 'moment'
+
+weekDayRange = (start, end) ->
+  cur = moment start, 'YYYY-MM-DD'
+  endDate = moment end, 'YYYY-MM-DD'
+  ret = []
+  while cur.isBefore endDate
+    if 0 < cur.weekday() < 6
+      ret.push cur.format('YYYY-MM-DD')
+    cur.add 1, 'd'
+  ret
+
+dateRange = weekRange '2012-05-01', '2015-04-01'
+
+fs.readFile 'data/2015-04-07.json', encoding: 'ascii', (err, data) ->
+  throw err if err
+  parser.bulletin data, (err, bulletinData) ->
+    throw err if err
+    async.each index, (index, callback) ->
+      fs.readFile "data/SH#{index}.txt", encoding: 'utf-8', (err, data) ->
+        throw err if err
+        parser.stockFeed.f data, (err, stockFeedData) ->
+          throw err if err
+          symbolBulletin = bulletinData[index]
+          pairedData = []
+          _.forEach dateRange, (date) ->
+            readCount = symbolBulletin[date].readCount
+            volume = stockFeedData
