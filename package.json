@@ -14,6 +14,8 @@
     "redis": "",
     "request": "",
     "fs-extra": "",
-    "yargs": ""
+    "yargs": "",
+    "argparse": "",
+    "csv-parse": ""
   }
 }
