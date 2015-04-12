@@ -5,11 +5,11 @@ _ = require 'lodash'
 
 exports.f = f = (input, output) ->
   parser = csvParse (err, data) ->
-    throw err if err?
+    throw err if err
     filtered = _.filter data, (i) ->
       1 < i.length
     fs.writeFile output, JSON.stringify(filtered), encoding: 'ascii', (err) ->
-      throw err if err?
+      throw err if err
   fs.createReadStream(input, encodind: 'ascii').pipe parser
 
 if require.main == module
