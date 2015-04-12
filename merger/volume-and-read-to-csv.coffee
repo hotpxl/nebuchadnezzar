@@ -16,11 +16,12 @@ weekDayRange = (start, end) ->
     cur.add 1, 'd'
   ret
 
-dateRange = weekRange '2012-05-01', '2015-04-01'
+dateRange = weekDayRange '2012-05-01', '2015-04-01'
 
 fs.readFile 'data/2015-04-07.json', encoding: 'ascii', (err, data) ->
   throw err if err
-  parser.bulletin data, (err, bulletinData) ->
+  data = JSON.parse data
+  parser.bulletin.f data, (err, bulletinData) ->
     throw err if err
     async.each index, (index, callback) ->
       fs.readFile "data/SH#{index}.txt", encoding: 'utf-8', (err, data) ->
@@ -28,7 +29,29 @@ fs.readFile 'data/2015-04-07.json', encoding: 'ascii', (err, data) ->
         parser.stockFeed.f data, (err, stockFeedData) ->
           throw err if err
           symbolBulletin = bulletinData[index]
+          console.log index
           pairedData = []
           _.forEach dateRange, (date) ->
-            readCount = symbolBulletin[date].readCount
-            volume = stockFeedData
+            readCount =
+              if date of symbolBulletin
+                symbolBulletin[date].readCount
+              else if 0 < pairedData.length
+                pairedData[pairedData.length - 1].readCount
+              else 0
+            volume =
+              if date of stockFeedData
+                stockFeedData[date].volume
+              else if 0 < pairedData.length
+                pairedData[pairedData.length - 1].volume
+              else
+                0
+            pairedData.push
+              date: date
+              readCount: readCount
+              volume: volume
+          csv = _.map pairedData, (line) ->
+            "#{line.date},#{line.readCount},#{line.volume}"
+          .join '\n'
+          fs.writeFile "data/#{index}.csv", csv, encoding: 'ascii', (err) ->
+            throw err if err
+            callback()
