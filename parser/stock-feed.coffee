@@ -3,14 +3,20 @@ csvParse = require 'csv-parse'
 fs = require 'fs'
 _ = require 'lodash'
 
-exports.f = f = (input, output) ->
-  parser = csvParse (err, data) ->
-    throw err if err
+exports.f = f = (input, callback) ->
+  csvParse input, (err, data) ->
+    callback err if err
     filtered = _.filter data, (i) ->
       1 < i.length
-    fs.writeFile output, JSON.stringify(filtered), encoding: 'ascii', (err) ->
+    callback null, filtered
+
+exports.io = io = (inputFile, outputFile) ->
+  fs.readFile inputFile, encoding: 'ascii', (err, data) ->
+    throw err if err
+    f data, (err, data) ->
       throw err if err
-  fs.createReadStream(input, encodind: 'ascii').pipe parser
+      fs.writeFile outputFile, JSON.stringify(data), encoding: 'ascii', (err) ->
+        throw err if err
 
 if require.main == module
   do ->
@@ -25,4 +31,4 @@ if require.main == module
       help: 'output file'
       required: true
     args = parser.parseArgs()
-    f args.input, args.output
+    io args.input, args.output
