@@ -31,6 +31,7 @@ node_modules
 *.swp
 *.json
 !package.json
+!data/**/*
 *.csv
 *.txt
 tmp
