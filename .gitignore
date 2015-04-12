@@ -30,4 +30,5 @@ node_modules
 # Custom
 *.swp
 *.json
+!package.json
 *.csv
