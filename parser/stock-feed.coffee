@@ -8,7 +8,16 @@ exports.f = f = (input, callback) ->
     callback err if err
     filtered = _.filter data, (i) ->
       1 < i.length
-    callback null, filtered
+    ret = {}
+    _.forEach filtered, (line) ->
+      ret[line[0]] =
+        open: parseFloat line[1]
+        close: parseFloat line[4]
+        max: parseFloat line[2]
+        min: parseFloat line[3]
+        volume: parseFloat line[5]
+        amount: parseFloat line[6]
+    callback null, ret
 
 exports.io = io = (inputFile, outputFile) ->
   fs.readFile inputFile, encoding: 'ascii', (err, data) ->
