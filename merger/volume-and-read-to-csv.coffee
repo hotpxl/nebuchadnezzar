@@ -38,19 +38,19 @@ fs.readFile 'data/2015-04-07.json', encoding: 'ascii', (err, data) ->
               else if 0 < pairedData.length
                 pairedData[pairedData.length - 1].readCount
               else 0
-            volume =
+            amount =
               if date of stockFeedData
-                stockFeedData[date].volume
+                stockFeedData[date].amount
               else if 0 < pairedData.length
-                pairedData[pairedData.length - 1].volume
+                pairedData[pairedData.length - 1].amount
               else
                 0
             pairedData.push
               date: date
               readCount: readCount
-              volume: volume
+              amount: amount
           csv = _.map pairedData, (line) ->
-            "#{line.date},#{line.readCount},#{line.volume}"
+            "#{line.readCount},#{line.amount}"
           .join '\n'
           fs.writeFile "data/#{index}.csv", csv, encoding: 'ascii', (err) ->
             throw err if err

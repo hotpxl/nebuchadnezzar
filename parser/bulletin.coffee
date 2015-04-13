@@ -1,23 +1,24 @@
 #!/usr/bin/env coffee
 fs = require 'fs'
+path = require 'path'
 _ = require 'lodash'
+Q = require 'q'
 
-exports.f = f = (input, callback) ->
-  callback null, input
+exports.f = f = (input) ->
+  input
 
-exports.sync = sync = (date, symbol) ->
-  fs.readFile "#{date}.json", encoding: 'ascii', (err, data) ->
-    throw err if err
+exports.sync = sync = (date, symbol, dir) ->
+  Q.nfcall fs.readFile, path.join(dir, "#{date}.json"), encoding: 'ascii'
+  .then (data) ->
     parsed = JSON.parse data
-    f parsed, (err, output) ->
-      throw err if err
-      symbolSpecific = output[symbol]
-      if not symbolSpecific?
-        throw new Error("symbol #{symbol} not found")
-      sorted = _.sortBy ([k, v.readCount, v.commentCount] for k, v of symbolSpecific), (i) -> i[0]
-      csv = _.map(sorted, (i) -> i.join(',')).join '\n'
-      fs.writeFile "#{date}_#{symbol}.csv", csv, (err) ->
-        throw err if err
+    Q.when parsed, f
+  .then (output) ->
+    symbolSpecific = output[symbol]
+    if not symbolSpecific?
+      throw new Error("symbol #{symbol} not found")
+    sorted = _.sortBy ([k, v.readCount, v.commentCount] for k, v of symbolSpecific), (i) -> i[0]
+    csv = _.map(sorted, (i) -> i.join(',')).join '\n'
+    Q.nfcall fs.writeFile, path.join(dir, "#{date}_#{symbol}.csv"), csv
 
 if require.main == module
   do ->
@@ -31,6 +32,10 @@ if require.main == module
     parser.addArgument ['-symbol'],
       help: 'symbol'
       required: true
+    parser.addArgument ['-path'],
+      help: 'path to find files'
+      defaultValue: '.'
     args = parser.parseArgs()
-    sync args.date, args.symbol
+    sync args.date, args.symbol, args.path
+    .done()
 

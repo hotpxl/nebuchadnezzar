@@ -5,7 +5,7 @@
     "start": "DEBUG=* coffee main.coffee"
   },
   "dependencies": {
-    "async": "",
+    "q": "",
     "cheerio": "",
     "debug": "",
     "hiredis": "",
