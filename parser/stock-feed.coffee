@@ -28,14 +28,13 @@ exports.sync = sync = (inputFile, outputFile) ->
 
 if require.main == module
   do ->
-    ArgumentParser = require('argparse').ArgumentParser
-    parser = new ArgumentParser(
+    parser = new (require('argparse').ArgumentParser)(
       description: 'parse stock feed'
     )
-    parser.addArgument ['-input'],
+    parser.addArgument ['--input'],
       help: 'input file'
       required: true
-    parser.addArgument ['-output'],
+    parser.addArgument ['--output'],
       help: 'output file'
       required: true
     args = parser.parseArgs()

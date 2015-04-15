@@ -22,17 +22,16 @@ exports.sync = sync = (date, symbol, dir) ->
 
 if require.main == module
   do ->
-    ArgumentParser = require('argparse').ArgumentParser
-    parser = new ArgumentParser(
+    parser = new (require('argparse').ArgumentParser)(
       description: 'parse bulletin data'
     )
-    parser.addArgument ['-date'],
+    parser.addArgument ['--date'],
       help: 'date'
       required: true
-    parser.addArgument ['-symbol'],
+    parser.addArgument ['--symbol'],
       help: 'symbol'
       required: true
-    parser.addArgument ['-path'],
+    parser.addArgument ['--path'],
       help: 'path to find files'
       defaultValue: '.'
     args = parser.parseArgs()
