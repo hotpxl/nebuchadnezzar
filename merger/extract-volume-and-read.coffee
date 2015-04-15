@@ -28,9 +28,7 @@ exports.sync = sync = (startDate, endDate, location) ->
               date: date
               readCount: readCount
               volume: volume
-          csv = _.map pairedData, (line) -> "#{line.readCount},#{line.volume}"
-            .join '\n'
-          Q.nfcall fs.writeFile, path.join(location.outputDir, "#{symbol}.csv"), csv, encoding: 'ascii'
+          Q.nfcall fs.writeFile, path.join(location.outputDir, "#{symbol}.csv"), JSON.stringify(pairedData), encoding: 'ascii'
       )
 
 if require.main == module
