@@ -1,6 +1,7 @@
 #!/usr/bin/env coffee
 _ = require 'lodash'
 fs = require 'fs'
+path = require 'path'
 Q = require 'q'
 utils = require '../utils'
 parser = require '../parser'
@@ -11,7 +12,7 @@ exports.sync = sync = (startDate, endDate, location) ->
     compositeIndex = JSON.parse data
     Q.nfcall fs.readFile, location.bulletinDataFile, encoding: 'ascii'
     .then (data) ->
-    parser.bulletin.f JSON.parse(data)
+      parser.bulletin.f JSON.parse(data)
     .then (bulletinData) ->
       dateRange = utils.weekDayRange startDate, endDate
       Q.all _.map(compositeIndex, (symbol) ->
@@ -19,18 +20,17 @@ exports.sync = sync = (startDate, endDate, location) ->
         .then parser.stockFeed.f
         .then (stockFeedData) ->
           symbolBulletin = bulletinData[symbol]
-          console.log symbol
           pairedData = []
           _.forEach dateRange, (date) ->
-            readCount = symbolBulletin[date]?.readcount ? pairedData[pairedData.length - 1]?.readCount ? 0
-            volume = stockFeedData[date]?.volume ? pairedData[pairedData.length - 1].volume ? 0
+            readCount = symbolBulletin[date]?.readCount ? pairedData[pairedData.length - 1]?.readCount ? 0
+            volume = stockFeedData[date]?.volume ? pairedData[pairedData.length - 1]?.volume ? 0
             pairedData.push
               date: date
               readCount: readCount
               volume: volume
-          csv = _.map pairedData, (line) -> "#{line.readCount},#{line.amount}"
+          csv = _.map pairedData, (line) -> "#{line.readCount},#{line.volume}"
             .join '\n'
-          Q.nfcall fs.writeFile, path.join(location.outputDir, "#{symbol}.csv"), encoding: 'ascii'
+          Q.nfcall fs.writeFile, path.join(location.outputDir, "#{symbol}.csv"), csv, encoding: 'ascii'
       )
 
 if require.main == module
@@ -38,27 +38,27 @@ if require.main == module
     parser = new (require('argparse').ArgumentParser)(
       description: 'extract volume and read count'
     )
-    parser.addArgument ['-start-date'],
+    parser.addArgument ['--start-date'],
       help: 'start date'
       required: true
       dest: 'startDate'
-    parser.addArgument ['-end-date'],
+    parser.addArgument ['--end-date'],
       help: 'end date'
       required: true
       dest: 'endDate'
-    parser.addArgument ['-composite-index'],
+    parser.addArgument ['--composite-index'],
       help: 'composite index file'
       required: true
       dest: 'compositeIndex'
-    parsre.addArgument ['-bulletin-data'],
+    parser.addArgument ['--bulletin-data'],
       help: 'bulletin data file'
       required: true
       dest: 'bulletinData'
-    parser.addArgument ['-stock-feed'],
+    parser.addArgument ['--stock-feed'],
       help: 'stock feed directory'
       required: true
       dest: 'stockFeed'
-    parser.addArgument ['-output'],
+    parser.addArgument ['--output'],
       help: 'output directory'
       required: true
     args = parser.parseArgs()
