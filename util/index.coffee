@@ -2,15 +2,21 @@
 moment = require 'moment'
 assert = require('chai').assert
 
-exports.weekDayRange = weekDayRange = (start, end) ->
+generateDayRange = (start, end, predicate) ->
   cur = moment start, 'YYYY-MM-DD'
   endDate = moment end, 'YYYY-MM-DD'
   assert.isTrue cur.isValid(), "#{start} is not a valid date"
   assert.isTrue endDate.isValid(), "#{end} is not a valid date"
   ret = []
   while cur.isBefore endDate
-    if 0 < cur.weekday() < 6
+    if predicate cur
       ret.push cur.format('YYYY-MM-DD')
     cur.add 1, 'days'
   ret
+
+exports.weekDayRange = weekDayRange = (start, end) ->
+  generateDayRange start, end, (i) -> 0 < i.weekday() < 6
+
+exports.allDayRange = allDayRange = (start, end) ->
+  generateDayRange start, end, -> true
 
