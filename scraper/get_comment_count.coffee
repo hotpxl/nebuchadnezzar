@@ -93,7 +93,7 @@ parseSingleSymbol = (symbol, start, executionDate, redis) ->
 
 exports.f = f = (date, redis, callback) ->
   symbolList = do ->
-    JSON.parse fs.readFileSync('sse_50.json', 'ascii')
+    JSON.parse fs.readFileSync('../data/sse_50.json', 'ascii')
   executionDate = date
   Q.ninvoke redis, 'hgetall', 'progress'
   .then (obj) ->
