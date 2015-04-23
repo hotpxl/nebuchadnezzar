@@ -73,7 +73,7 @@ parseSinglePage = (symbol, page, lastEntryDate, executionDate, redis) ->
           storePayload createDate
         else
           requestPromise Url.resolve('http://guba.eastmoney.com/', threadUrl)
-          .then ->
+          .then (body) ->
             html = cherrio.load body
             [match] = /\d{4}-\d{2}-\d{2}/.exec html('.zwfbtime').text()
             createDate = moment match, 'YYYY-MM-DD'
