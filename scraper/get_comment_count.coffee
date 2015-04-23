@@ -1,3 +1,4 @@
+#!/usr/bin/env coffee
 fs = require 'fs'
 request = require 'request'
 cherrio = require 'cheerio'

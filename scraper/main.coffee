@@ -1,3 +1,4 @@
+#!/usr/bin/env coffee
 redis = require('redis').createClient()
 moment = require 'moment'
 get_comment_count = require './get_comment_count'

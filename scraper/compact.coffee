@@ -1,3 +1,4 @@
+#!/usr/bin/env coffee
 fs = require 'fs-extra'
 moment = require 'moment'
 debug = require('debug') 'compact'
