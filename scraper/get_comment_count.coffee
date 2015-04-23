@@ -83,7 +83,7 @@ parseSinglePage = (symbol, page, lastEntryDate, executionDate, redis) ->
       # Process next page
       redis.hset 'progress', symbol, page
       if page < maxPageNum
-        parseSinglePage symbol, page + 1, lastEntryDate, executionDate, redis, callback
+        parseSinglePage symbol, page + 1, lastEntryDate, executionDate, redis
       else
         Q()
 
@@ -91,7 +91,7 @@ parseSingleSymbol = (symbol, start, executionDate, redis) ->
   debug "symbol #{symbol} starting from page #{start}"
   parseSinglePage symbol, start, executionDate, executionDate, redis
 
-exports.f = f = (date, redis, callback) ->
+exports.f = f = (date, redis) ->
   symbolList = do ->
     JSON.parse fs.readFileSync('../data/sse_50.json', 'ascii')
   executionDate = date

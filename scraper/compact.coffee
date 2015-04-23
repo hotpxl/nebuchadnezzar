@@ -4,7 +4,7 @@ moment = require 'moment'
 debug = require('debug') 'compact'
 Q = require 'q'
 
-exports.f = f = (date, redis, callback) ->
+exports.f = f = (date, redis) ->
   Q.ninvoke redis, 'keys', '*'
   .then (res) ->
     accumulator = {}
