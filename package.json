@@ -2,7 +2,7 @@
   "name": "thesis",
   "private": true,
   "scripts": {
-    "start": "DEBUG=* coffee main.coffee"
+    "start": "echo \"Error: no start specified\" && exit 1"
   },
   "dependencies": {
     "q": "",
