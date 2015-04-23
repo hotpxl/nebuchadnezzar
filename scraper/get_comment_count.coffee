@@ -4,6 +4,7 @@ request = require 'request'
 cherrio = require 'cheerio'
 moment = require 'moment'
 Q = require 'q'
+Url = require 'url'
 _ = require 'lodash'
 debug = require('debug') 'getCommentCount'
 
@@ -71,7 +72,7 @@ parseSinglePage = (symbol, page, lastEntryDate, executionDate, redis) ->
         if createDate.isValid() and -1 <= createDate.diff(lastEntryDate, 'days') <= 0
           storePayload createDate
         else
-          requestPromise "http://guba.eastmoney.com/#{threadUrl}"
+          requestPromise url.resolve('http://guba.eastmoney.com/', threadUrl)
           .then ->
             html = cherrio.load body
             [match] = /\d{4}-\d{2}-\d{2}/.exec html('.zwfbtime').text()
