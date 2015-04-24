@@ -3,7 +3,7 @@ import json
 from matplotlib.pyplot import *
 import numpy as np
 from statsmodels.tsa import stattools
-import stats
+from stats.preprocess import sliding_ratio
 
 with open('./data/sse_50.json') as f:
     sseIndices = json.load(f)
@@ -15,9 +15,9 @@ for sse in sseIndices:
     readCount = np.asarray([x['readCount'] for x in data])
     readCount = readCount[2:]
     for windowSize in range(2, 20):
-        v = stats.slidingRatio(volume, windowSize)
+        v = sliding_ratio(volume, windowSize)
         v = np.reshape(v, (len(v), 1))
-        # r = stats.slidingRatio(readCount, windowSize)
+        # r = sliding_ratio(readCount, windowSize)
         r = np.asarray(readCount[:len(v)])
         r = np.reshape(r, (len(r), 1))
         d = np.concatenate([v, r], axis=1)
