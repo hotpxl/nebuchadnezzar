@@ -2,22 +2,40 @@
 fs = require 'fs-extra'
 moment = require 'moment'
 debug = require('debug') 'compact'
+# Progress = require 'progress'
 _ = require 'lodash'
 Q = require 'q'
 
+getAllKeys = (redis) ->
+  deferred = Q.defer()
+  redis.keys '*', (err, res) ->
+    deferred.reject err if err
+    deferred.resolve res
+  deferred.promise
+
 exports.f = f = (date, redis) ->
-  Q.ninvoke redis, 'keys', '*'
+  getAllKeys redis
   .then (res) ->
-    _.reduce res, (accumulator, item) ->
-      accumulator.then (accumulator) ->
+    # bar = new Progress('[:bar] :percent :etas',
+    #   total: res.length
+    #   width: 20
+    # )
+    deferred = Q.defer()
+    loopBody = (accumulator, i) ->
+      if i == res.length
+        deferred.resolve accumulator
+      else
+        next = (accumulator) ->
+          loopBody accumulator, i + 1
+        item = res[i]
+        # bar.tick 1
         if item == 'progress'
-          Q accumulator
+          next accumulator
         else
-          [_, symbol, _] = item.split(':')
-          symbol = parseInt symbol
+          symbol = parseInt item.split(':')[1]
           accumulator[symbol] ?= {}
-          Q.ninvoke redis, 'get', item
-          .then (res) ->
+          redis.get item, (err, res) ->
+            deferred.reject err if err
             payload = JSON.parse res
             readCount = payload.readCount
             commentCount = payload.commentCount
@@ -27,8 +45,10 @@ exports.f = f = (date, redis) ->
               commentCount: 0
             accumulator[symbol][createDate].readCount += readCount
             accumulator[symbol][createDate].commentCount += commentCount
-            Q accumulator
-    , Q {}
+            next accumulator
+    process.nextTick ->
+      loopBody {}, 0
+    deferred.promise
     .then (accumulator) ->
       Q.ninvoke redis, 'save'
       .then ->

@@ -15,6 +15,7 @@
     "request": "",
     "fs-extra": "",
     "argparse": "",
+    "progress": "",
     "csv-parse": "",
     "chai": ""
   }
