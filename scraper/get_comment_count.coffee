@@ -19,7 +19,7 @@ requestPromise = (url) ->
   deferred = Q.defer()
   request url, (err, response, body) ->
     deferred.reject err if err
-    deferred.reject response if response.statusCode != 200
+    deferred.reject new Error("#{url} returned status code #{response.statusCode}") if response.statusCode != 200
     deferred.resolve body
   deferred.promise
 
