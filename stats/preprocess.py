@@ -1,4 +1,3 @@
-#!/usr/bin/env python3.4
 import numpy as np
 
 def slidingRatio(data, windowSize):
