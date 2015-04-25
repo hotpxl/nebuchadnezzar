@@ -7,7 +7,6 @@
   "dependencies": {
     "q": "",
     "cheerio": "",
-    "debug": "",
     "hiredis": "",
     "lodash": "",
     "moment": "",
@@ -15,7 +14,10 @@
     "request": "",
     "fs-extra": "",
     "argparse": "",
+    "debug": "",
     "progress": "",
+    "nodemailer": "",
+    "nodemailer-smtp-transport": "",
     "csv-parse": "",
     "chai": ""
   }
