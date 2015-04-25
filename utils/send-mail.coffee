@@ -16,7 +16,7 @@ exports.f = f = (to, text) ->
     from: 'no-reply@yutian.li'
     to: to
     subject: "[#{os.hostname()}] #{os.type()}-#{os.release()}-#{os.arch()} notification"
-    text: "# debug info\n#{JSON.stringify os.networkInterfaces()}\n\n# text\n#{text}"
+    text: "# debug info\n#{JSON.stringify os.networkInterfaces(), null, 2}\n\n# text\n#{text}"
   Q.ninvoke transporter, 'sendMail', mailOptions
 
 if require.main == module
