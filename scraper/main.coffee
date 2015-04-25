@@ -1,13 +1,13 @@
 #!/usr/bin/env coffee
 redis = require('redis').createClient()
 moment = require 'moment'
-get_comment_count = require './get_comment_count'
+getCommentCount = require './get-comment-count'
 compact = require './compact'
 Q = require 'q'
 
 redis.auth 'whatever'
 executionDate = moment()
-get_comment_count.f executionDate, redis
+getCommentCount.f executionDate, redis
 .then ->
   compact.f executionDate, redis
 .then ->
