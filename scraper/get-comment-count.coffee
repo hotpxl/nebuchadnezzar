@@ -12,7 +12,7 @@ makeUrl = (symbol, page) ->
   "http://guba.eastmoney.com/list,#{symbol},f_#{page}.html"
 
 getPageCount = (html) ->
-  match = /',(\d+),(\d+),/.exec html('script', '.pagernums').text()
+  match = /\|(\d+)\|(\d+)\|/.exec html('.pagernums').data('pager')
   Math.ceil parseInt(match[1]) / parseInt(match[2])
 
 requestPromise = (url) ->
