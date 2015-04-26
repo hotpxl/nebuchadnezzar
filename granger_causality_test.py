@@ -2,16 +2,15 @@
 import json
 import numpy as np
 import statsmodels.tsa.stattools as stattools
+import stats.data
+import stats.plot
+import stats.preprocess
 
 threshold = 0.05
 
-# if __name__ == '__main__':
-with open('../data/sse_50.json') as f:
-    sseIndices = json.load(f)
-for sse in sseIndices:
-    with open('./{}.json'.format(sse)) as f:
-        data = json.load(f)
-    x = [[i['volume'], i['readCount']] for i in data]
+sse_indices = stats.data.sse_indices()
+for index in sse_indices:
+    data = stats.data.get_merged(index, 'volume', 'readCount')
     res = stattools.grangercausalitytests(x, 7, verbose=False)
     bestResults = []
     for i in res:

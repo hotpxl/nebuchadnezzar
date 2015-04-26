@@ -24,17 +24,19 @@ exports.sync = sync = (startDate, endDate, location) ->
           _.forEach dateRange, (date) ->
             readCount = symbolBulletin[date]?.readCount ? pairedData[pairedData.length - 1]?.readCount ? 0
             volume = stockFeedData[date]?.volume ? pairedData[pairedData.length - 1]?.volume ? 0
+            close = stockFeedData[date]?.close ? pairedData[pairedData.length - 1]?.close ? 0
             pairedData.push
               date: date
               readCount: readCount
               volume: volume
+              close: close
           Q.nfcall fs.writeFile, path.join(location.outputDir, "#{symbol}.json"), JSON.stringify(pairedData), encoding: 'ascii'
       )
 
 if require.main == module
   do (parser) ->
     parser = new (require('argparse').ArgumentParser)(
-      description: 'extract volume and read count'
+      description: 'extract data'
     )
     parser.addArgument ['--start-date'],
       help: 'start date'
