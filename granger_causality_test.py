@@ -11,6 +11,7 @@ threshold = 0.05
 sse_indices = stats.data.sse_indices()
 bar_width=0.2
 results = []
+results_th = []
 for index in sse_indices:
     x = stats.data.get_merged(index, 'volume', 'readCount')
     res = stattools.grangercausalitytests(x, 7, verbose=False)
@@ -20,7 +21,18 @@ for index in sse_indices:
         res[7][0]['lrtest'][1],
         res[7][0]['ssr_ftest'][1],
     ]
+    cur_th = [8] * 4
+    for i in range(7, 0, -1):
+        if res[i][0]['ssr_chi2test'][1] <= threshold:
+            cur_th[0] = i
+        if res[i][0]['params_ftest'][1] <= threshold:
+            cur_th[1] = i
+        if res[i][0]['lrtest'][1] <= threshold:
+            cur_th[2] = i
+        if res[i][0]['ssr_ftest'][1] <= threshold:
+            cur_th[3] = i
     results.append(cur)
+    results_th.append(cur_th)
 fig, ax = plt.subplots()
 index = np.arange(len(results))
 plt.bar(index, np.asarray(results)[:, 0].flatten(), bar_width, color='b', label='ssr_chi2test')
