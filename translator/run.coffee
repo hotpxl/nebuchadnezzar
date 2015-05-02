@@ -2,8 +2,19 @@
 Q = require 'q'
 _ = require 'lodash'
 Progress = require 'progress'
+winston = require 'winston'
 translator = require './'
 database = require '../database'
+
+logger = new (winston.Logger)(
+  transports: [
+    new (winston.transports.Console)(
+      level: 'debug'
+      colorize: true
+      label: module.filename
+    )
+  ]
+)
 
 if require.main == module
   Q.all [
@@ -25,11 +36,15 @@ if require.main == module
         Q.ninvoke sourceRedis, 'get', key
         .then (entry) ->
           entry = JSON.parse entry
-          translator.baidu.translate entry.title + '\n' + entry.content.replace(/<br>/g, '')
+          src = entry.title + '\n' + entry.content.replace(/<br>/g, '')
+          translator.baidu.translate src
           .then (res) ->
             d =
               translation: res
             targetRedis.set "#{entry.id}", JSON.stringify(d)
+            logger.debug 'translated',
+              src: src
+              dst: res
             bar.tick 1
       Q.all _.map(_.range(300), ->
         loo = ->
