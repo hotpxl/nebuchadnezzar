@@ -18,13 +18,24 @@ logger = new (winston.Logger)(
 
 requestAsync = (url) ->
   deferred = Q.defer()
-  request url, (err, response, body) ->
-    if err
-      deferred.reject err
-    else if response.statusCode != 200
-      deferred.reject new Error("#{url} returned status code #{response.statusCode}")
-    else
-      deferred.resolve body
+  loo = (retry) ->
+    request url, (err, response, body) ->
+      maybeRetry = (rejection) ->
+        if 0 < retry
+          logger.warn 'retry request',
+            url: url
+            err: err
+            response: response
+          loo retry - 1
+        else
+          deferred.reject rejection
+      if err
+        maybeRetry err
+      else if response.statusCode != 200
+        maybeRetry new Error("#{url} returned status code #{response.statusCode}")
+      else
+        deferred.resolve body
+  loo 5
   deferred.promise
 
 makeUrl = (symbol, page) ->
