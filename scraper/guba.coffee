@@ -82,4 +82,6 @@ parseAll = (redis) ->
 if require.main == module
   redis = require('redis').createClient()
   parseAll redis
+  .then ->
+    redis.quit()
   .done()
