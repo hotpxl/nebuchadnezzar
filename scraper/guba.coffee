@@ -74,7 +74,7 @@ parseAll = (redis) ->
     JSON.parse fs.readFileSync('../data/sse_50.json', 'ascii')
   Q.ninvoke redis, 'hgetall', 'progress'
   .then (progress) ->
-    Q.all _map(symbolList, (i) ->
+    Q.all _.map(symbolList, (i) ->
       startPage = parseInt progress?[i] ? 1
       parseSingleSymbol i, startPage, redis
     )
