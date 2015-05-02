@@ -1,4 +1,5 @@
 #!/usr/bin/env coffee
+http = require 'http'
 Q = require 'q'
 _ = require 'lodash'
 Progress = require 'progress'
@@ -18,6 +19,7 @@ logger = new (winston.Logger)(
 )
 
 if require.main == module
+  http.globalAgent.maxSockets = Infinity
   Q.all [
     database.redis.getConnection 0
     database.redis.getConnection 1
