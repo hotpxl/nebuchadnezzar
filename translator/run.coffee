@@ -40,16 +40,21 @@ if require.main == module
         Q.ninvoke sourceRedis, 'get', key
         .then (entry) ->
           entry = JSON.parse entry
-          src = entry.title + '\n' + entry.content.replace(/<br>/g, '')
-          translator.baidu.translate src
-          .then (res) ->
-            d =
-              translation: res
-            targetRedis.set "#{entry.id}", JSON.stringify(d)
-            logger.debug 'translated',
-              src: src
-              dst: res
+          Q.ninvoke targetRedis, 'get', entry.id
+          .then (targetEntry) ->
             bar.tick 1
+            if JSON.parse(targetEntry)?.dst
+              return
+            else
+              src = entry.title + '\n' + entry.content.replace(/<br>/g, '')
+              translator.baidu.translate src
+              .then (res) ->
+                d =
+                  translation: res
+                targetRedis.set "#{entry.id}", JSON.stringify(d)
+                logger.debug 'translated',
+                  src: src
+                  dst: res
       Q.all _.map(_.range(300), ->
         loo = ->
           val = keys.pop()
@@ -64,5 +69,4 @@ if require.main == module
       targetRedis.closeConnection()
       sourceRedis.closeConnection()
   .done()
-
 
