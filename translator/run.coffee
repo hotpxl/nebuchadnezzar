@@ -18,8 +18,9 @@ logger = new (winston.Logger)(
   ]
 )
 
+http.globalAgent.maxSockets = Infinity
+
 if require.main == module
-  http.globalAgent.maxSockets = Infinity
   Q.all [
     database.redis.getConnection 0
     database.redis.getConnection 1

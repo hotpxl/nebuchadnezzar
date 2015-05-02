@@ -1,5 +1,6 @@
 #!/usr/bin/env coffee
 fs = require 'fs'
+http = require 'http'
 request = require 'request'
 Q = require 'q'
 _ = require 'lodash'
@@ -16,6 +17,8 @@ logger = new (winston.Logger)(
     )
   ]
 )
+
+http.globalAgent.maxSockets = Infinity
 
 requestAsync = (url) ->
   deferred = Q.defer()
