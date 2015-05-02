@@ -75,12 +75,15 @@ parseSingleSymbol = (symbol, startPage, redis) ->
     symbol: symbol
     startPage: startPage
   loo = (page) ->
-    parseSinglePage symbol, page, redis
+    unroll = 4
+    Q.all _.map([page..page + unroll - 1], (page) ->
+      parseSinglePage symbol, page, redis
+    )
     .then (res) ->
-      if res == 0
+      if _.min(res) == 0
         return
       else
-        loo page + 1
+        loo page + unroll
   loo startPage
 
 parseAll = (redis) ->
