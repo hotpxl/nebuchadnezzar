@@ -1,7 +1,7 @@
 redis = require 'redis'
 winston = require 'winston'
-connection = null
-clientCount = 0
+Q = require 'q'
+connectionPool = {}
 
 logger = new (winston.Logger)(
   transports: [
@@ -13,22 +13,31 @@ logger = new (winston.Logger)(
   ]
 )
 
-closeConnection = ->
-  clientCount -= 1
-  if clientCount == 0
-    connection.quit()
-    logger.debug 'redis connection closed'
-    connection = null
+closeConnection = (db) ->
+  connectionPool[db].count -= 1
+  if connectionPool[db].count == 0
+    connectionPool[db].connection.quit()
+    logger.debug "redis connection to #{db} closed"
+    delete connectionPool[db]
     return
 
-getConnection = ->
-  clientCount += 1
-  if not connection
+getConnection = (db) ->
+  db ?= 0
+  if not connectionPool[db]
     connection = redis.createClient
       parser: 'hiredis'
       auth_pass: 'whatever'
-    connection.closeConnection = closeConnection
-    logger.debug 'redis connection established'
-  connection
+    Q.ninvoke connection, 'select', db
+    .then ->
+      connection.closeConnection = ->
+        closeConnection db
+      connectionPool[db] =
+        connection: connection
+        count: 1
+      logger.debug "redis connection to #{db} established"
+      connection
+  else
+    connectionPool[db].count += 1
+    Q connectionPool[db].connection
 
 exports.getConnection = getConnection
