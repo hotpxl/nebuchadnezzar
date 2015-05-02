@@ -8,6 +8,7 @@ logger = new (winston.Logger)(
     new (winston.transports.Console)(
       level: 'debug'
       colorize: true
+      timestamp: true
       label: module.filename
     )
   ]
