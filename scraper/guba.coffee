@@ -24,7 +24,10 @@ http.globalAgent.maxSockets = Infinity
 requestAsync = (url) ->
   deferred = Q.defer()
   loo = (retry) ->
-    request url, (err, response, body) ->
+    request
+      uri: url
+      timeout: 5000
+    , (err, response, body) ->
       maybeRetry = (rejection) ->
         if 0 < retry
           logger.warn 'retry request',
@@ -80,15 +83,21 @@ parseSingleSymbol = (symbol, startPage, redis) ->
     symbol: symbol
     startPage: startPage
   loo = (page) ->
-    unroll = 4
-    Q.all _.map([page..page + unroll - 1], (page) ->
-      parseSinglePage symbol, page, redis
-    )
+    parseSinglePage symbol, page, redis
     .then (res) ->
-      if _.min(res) == 0
+      if res == 0
         return
       else
-        loo page + unroll
+        loo page + 1
+    # unroll = 4
+    # Q.all _.map([page..page + unroll - 1], (page) ->
+    #   parseSinglePage symbol, page, redis
+    # )
+    # .then (res) ->
+    #   if _.min(res) == 0
+    #     return
+    #   else
+    #     loo page + unroll
   loo startPage
 
 parseAll = (redis) ->
