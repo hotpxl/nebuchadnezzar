@@ -6,6 +6,7 @@ Q = require 'q'
 _ = require 'lodash'
 moment = require 'moment'
 winston = require 'winston'
+database = require '../database'
 
 logger = new (winston.Logger)(
   transports: [
@@ -101,8 +102,8 @@ parseAll = (redis) ->
     )
 
 if require.main == module
-  redis = require('redis').createClient()
+  redis = database.redis.getConnection(0)
   parseAll redis
   .then ->
-    redis.quit()
+    redis.closeConnection()
   .done()
