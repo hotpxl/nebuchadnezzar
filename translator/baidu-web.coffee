@@ -17,7 +17,6 @@ translate = (q) ->
       deferred.reject new Error("translation returned status code #{response.statusCode}")
     else
       data = JSON.parse body
-      console.log data
       res = _.pluck(data.trans_result.data, 'dst').join '\n'
       deferred.resolve res
   deferred.promise
