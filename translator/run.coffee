@@ -18,7 +18,7 @@ logger = new (winston.Logger)(
   ]
 )
 
-http.globalAgent.maxSockets = 20
+http.globalAgent.maxSockets = 1
 
 if require.main == module
   Q.all [
@@ -47,7 +47,7 @@ if require.main == module
               return
             else
               src = entry.title + '\n' + entry.content.replace(/<br>/g, '')
-              translator.baiduWeb.translate src
+              translator.baidu.translate src
               .then (res) ->
                 d =
                   translation: res
@@ -55,7 +55,7 @@ if require.main == module
                 logger.debug 'translated',
                   src: src
                   dst: res
-      Q.all _.map(_.range(300), ->
+      Q.all _.map(_.range(10), ->
         loo = ->
           val = keys.pop()
           if val

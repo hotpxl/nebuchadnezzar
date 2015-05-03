@@ -17,6 +17,7 @@
     "debug": "",
     "winston": "",
     "progress": "",
+    "sleep": "",
     "nodemailer": "",
     "nodemailer-smtp-transport": "",
     "csv-parse": "",

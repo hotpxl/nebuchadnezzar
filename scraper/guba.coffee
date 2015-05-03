@@ -25,7 +25,7 @@ requestAsync = (url) ->
   deferred = Q.defer()
   loo = (retry) ->
     request
-      uri: url
+      url: url
       timeout: 5000
     , (err, response, body) ->
       maybeRetry = (rejection) ->
