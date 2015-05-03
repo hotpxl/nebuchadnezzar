@@ -102,8 +102,9 @@ parseAll = (redis) ->
     )
 
 if require.main == module
-  redis = database.redis.getConnection(0)
-  parseAll redis
+  database.redis.getConnection(0)
+  .then (redis) ->
+    parseAll redis
   .then ->
     redis.closeConnection()
   .done()
