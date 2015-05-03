@@ -21,5 +21,5 @@ translate = (q) ->
       deferred.resolve res
   deferred.promise
 
-exports.tranlate = translate
+exports.translate = translate
 

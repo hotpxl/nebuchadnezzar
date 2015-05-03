@@ -19,7 +19,7 @@ logger = new (winston.Logger)(
   ]
 )
 
-http.globalAgent.maxSockets = Infinity
+http.globalAgent.maxSockets = 10
 
 requestAsync = (url) ->
   deferred = Q.defer()
@@ -83,21 +83,15 @@ parseSingleSymbol = (symbol, startPage, redis) ->
     symbol: symbol
     startPage: startPage
   loo = (page) ->
-    parseSinglePage symbol, page, redis
+    unroll = 5
+    Q.all _.map([page..page + unroll - 1], (page) ->
+      parseSinglePage symbol, page, redis
+    )
     .then (res) ->
-      if res == 0
+      if _.max(res) == 0
         return
       else
-        loo page + 1
-    # unroll = 4
-    # Q.all _.map([page..page + unroll - 1], (page) ->
-    #   parseSinglePage symbol, page, redis
-    # )
-    # .then (res) ->
-    #   if _.min(res) == 0
-    #     return
-    #   else
-    #     loo page + unroll
+        loo page + unroll
   loo startPage
 
 parseAll = (redis) ->
