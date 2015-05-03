@@ -9,16 +9,16 @@ database = require '../database'
 
 logger = new (winston.Logger)(
   transports: [
-    new (winston.transports.Console)(
+    new (winston.transports.File)(
       level: 'debug'
-      colorize: true
       timestamp: true
+      filename: 'log'
       label: module.filename
     )
   ]
 )
 
-http.globalAgent.maxSockets = Infinity
+http.globalAgent.maxSockets = 20
 
 if require.main == module
   Q.all [
