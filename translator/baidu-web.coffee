@@ -17,7 +17,7 @@ logger = new (winston.Logger)(
 
 loggerFile = new (winston.Logger)(
   transports: [
-    new (winston.transports.Flie)(
+    new (winston.transports.File)(
       level: 'debug'
       timestamp: true
       filename: 'baidu-web.log'
