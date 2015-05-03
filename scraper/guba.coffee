@@ -71,7 +71,6 @@ parseSinglePage = (symbol, page, redis) ->
     entries = _.map data.re, (post) ->
       stripSingleEntry symbol, post
     dumpEntries entries, redis
-    redis.hset 'progress', symbol, page
     logger.debug 'processed',
       length: entries.length
       symbol: symbol
@@ -88,6 +87,7 @@ parseSingleSymbol = (symbol, startPage, redis) ->
       parseSinglePage symbol, page, redis
     )
     .then (res) ->
+      redis.hset 'progress', symbol, page + unroll - 1
       if _.max(res) == 0
         return
       else
