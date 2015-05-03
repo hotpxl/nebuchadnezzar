@@ -23,8 +23,3 @@ translate = (q) ->
 
 exports.tranlate = translate
 
-if require.main == module
-  translate '招商银行怎么啦\n行怎么啦'
-  .then (i) ->
-    console.log i
-  .done()
