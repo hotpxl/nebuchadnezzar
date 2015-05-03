@@ -24,10 +24,3 @@ translate = (q) ->
 
 exports.translate = translate
 
-if require.main == module
-  translate '终于开始活跃了\n'
-  .then (i) ->
-    console.log i
-  .done()
-
-
