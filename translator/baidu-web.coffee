@@ -37,6 +37,7 @@ translate = (q) ->
           if 0 < retry
             logger.warn 'retry request',
               data: data
+            sleep.sleep 1
             loo retry - 1
           else
             deferred.reject new Error("translation failed with reply: #{body}")

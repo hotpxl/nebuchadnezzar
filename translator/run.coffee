@@ -47,7 +47,7 @@ if require.main == module
               return
             else
               src = entry.title + '\n' + entry.content.replace(/<br>/g, '')
-              translator.baidu.translate src
+              translator.baiduWeb.translate src
               .then (res) ->
                 d =
                   translation: res
