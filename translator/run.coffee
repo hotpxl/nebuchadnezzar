@@ -18,7 +18,7 @@ logger = new (winston.Logger)(
   ]
 )
 
-http.globalAgent.maxSockets = 1
+http.globalAgent.maxSockets = 2
 
 if require.main == module
   Q.all [
