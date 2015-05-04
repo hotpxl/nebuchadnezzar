@@ -22,3 +22,9 @@ translate = (q) ->
   deferred.promise
 
 exports.translate = translate
+
+if require.main == module
+  translate '一群乌合之众 又出来乱叫了！~~~\n一跌 就看空 叫空··哈哈··· 一涨 就一片 叫好！'
+  .then (i) ->
+    console.log i
+  .done()

@@ -43,7 +43,7 @@ if require.main == module
           Q.ninvoke targetRedis, 'get', entry.id
           .then (targetEntry) ->
             bar.tick 1
-            if JSON.parse(targetEntry)?.dst
+            if JSON.parse(targetEntry)?.translation
               return
             else
               src = entry.title + '\n' + entry.content.replace(/<br>/g, '')
