@@ -28,15 +28,18 @@ class RoundRobinDispatcher
     lastScheduled = (@toSchedule - 1) %% @pairs.length
     check = (toSchedule) =>
       @pairs[toSchedule].bucket.get()
-    while @toSchedule != lastScheduled and not check(@toSchedule)
+    incr = =>
       @toSchedule = (@toSchedule + 1) % @pairs.length
+    while @toSchedule != lastScheduled and not check(@toSchedule)
+      incr()
     if @toSchedule == lastScheduled and not check(@toSchedule)
       @counter[@counter.length - 1] += 1
+      incr()
       @fallback
     else
       @counter[@toSchedule] += 1
+      incr()
       @pairs[@toSchedule].action
-    @toSchedule = (@toSchedule + 1) % @pairs.length
 
   status: ->
     s = _.sum @counter
