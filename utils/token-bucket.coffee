@@ -1,9 +1,9 @@
 class TokenBucket
-  constructor: (@speed, @threshold) ->
-    @speed = parseInt @speed
+  constructor: (@duration, @threshold) ->
+    @duration = parseInt @duration
     @threshold = parseInt @threshold
-    if not @speed
-      throw new TypeError('speed required as an int')
+    if not @duration
+      throw new TypeError('duration required as an int')
     if not @threshold
       throw new TypeError('threshold required as an int')
     @lastTime = (new Date()).getTime()
@@ -11,12 +11,12 @@ class TokenBucket
 
   get: ->
     currentTime = (new Date()).getTime()
-    @currentVolume = Math.min @speed * @threshold, @currentVolume + currentTime - @lastTime
+    @currentVolume = Math.min @duration * @threshold, @currentVolume + currentTime - @lastTime
     @lastTime = currentTime
-    if @currentVolume < @speed
+    if @currentVolume < @duration
       false
     else
-      @currentVolume -= @speed
+      @currentVolume -= @duration
       true
 
 module.exports = TokenBucket
