@@ -13,6 +13,7 @@ RoundRobinDispatcher = utils.RoundRobinDispatcher
 logger = utils.logging.newFileLogger module.filename, 'log'
 
 http.globalAgent.maxSockets = 5
+averageLoad = 5
 
 if require.main == module
   availableTranslators =
@@ -51,7 +52,10 @@ if require.main == module
               process.stdout.write '\rskip'
               return
             else
-              src = (entry.title + '\n' + entry.content).replace(/<br>|\u001d|\u2586|\u2587|\u258c|\u00b7|\u0000|\uff0b|\u002e/g, ' ').trim()
+              src = (entry.title + '\n' + entry.content)
+              .replace /<br>/g, ' '
+              .replace /[^0-9a-zA-Z\u4e00-\u9fa5]/g, ' '
+              .trim()
               currentTranslator = round.get()
               process.stdout.write '\r'
               process.stdout.write JSON.stringify(round.status())
@@ -63,7 +67,7 @@ if require.main == module
                 logger.debug 'translated',
                   src: src
                   dst: res
-      Q.all _.map(_.range(4 * http.globalAgent.maxSockets * (availableTranslators.length + 1)), ->
+      Q.all _.map(_.range(averageLoad * Math.min(http.globalAgent.maxSockets, 50) * (availableTranslators.length + 1)), ->
         loo = ->
           val = keys.pop()
           if val
