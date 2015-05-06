@@ -2,29 +2,11 @@ request = require 'request'
 _ = require 'lodash'
 sleep = require 'sleep'
 Q = require 'q'
-winston = require 'winston'
+utils = require '../utils'
 
-logger = new (winston.Logger)(
-  transports: [
-    new (winston.transports.Console)(
-      level: 'debug'
-      colorize: true
-      timestamp: true
-      label: module.filename
-    )
-  ]
-)
+logger = utils.logging.newConsoleLogger module.filename
 
-loggerFile = new (winston.Logger)(
-  transports: [
-    new (winston.transports.File)(
-      level: 'debug'
-      timestamp: true
-      filename: 'baidu-web.log'
-      label: module.filename
-    )
-  ]
-)
+loggerFile = utils.logging.newFileLogger module.filename 'baidu-web.log'
 
 translate = (q) ->
   # preprocessing
@@ -40,24 +22,21 @@ translate = (q) ->
       method: 'POST'
       form: query
     , (err, response, body) ->
-      if err
+      maybeRetry = (rejection) ->
         if 0 < retry
           logger.warn 'retry request',
             err: err
-            query: JSON.stringify q
+            response: response
+            body: body
+            query: q
           sleep.sleep 1
           loo retry - 1
         else
-          deferred.reject err
+          deferred.reject rejection
+      if err
+        maybeRetry err
       else if response.statusCode != 200
-        if 0 < retry
-          logger.warn 'retry request',
-            statusCode: response.statusCode
-            query: JSON.stringify q
-          sleep.sleep 1
-          loo retry - 1
-        else
-          deferred.reject new Error("translation returned status code #{response.statusCode}")
+        maybeRetry new Error("translation returned status code #{response.statusCode}")
       else
         data = JSON.parse body
         if not data.trans_result
@@ -66,14 +45,8 @@ translate = (q) ->
               data: data
               query: q
             deferred.resolve ''
-          else if 0 < retry
-            logger.warn 'retry request',
-              data: data
-              query: JSON.stringify q
-            sleep.sleep 1
-            loo retry - 1
           else
-            deferred.reject new Error("translation failed with reply: #{body}")
+            maybeRetry new Error("translation failed with reply: #{body}")
         else
           res = _.pluck(data.trans_result.data, 'dst').join '\n'
           deferred.resolve res

@@ -5,19 +5,10 @@ request = require 'request'
 Q = require 'q'
 _ = require 'lodash'
 moment = require 'moment'
-winston = require 'winston'
 database = require '../database'
+utils = require '../utils'
 
-logger = new (winston.Logger)(
-  transports: [
-    new (winston.transports.Console)(
-      level: 'debug'
-      colorize: true
-      timestamp: true
-      label: module.filename
-    )
-  ]
-)
+logger = utils.logging.newConsoleLogger module.filename
 
 http.globalAgent.maxSockets = 10
 

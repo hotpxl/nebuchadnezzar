@@ -3,22 +3,14 @@ http = require 'http'
 Q = require 'q'
 _ = require 'lodash'
 Progress = require 'progress'
-winston = require 'winston'
 translator = require './'
-secret = require './baidu-secret'
 database = require '../database'
-RoundRobinDispatcher = require '../utils/round-robin-dispatcher'
+utils = require '../utils'
+secret = require './baidu-secret'
 
-logger = new (winston.Logger)(
-  transports: [
-    new (winston.transports.File)(
-      level: 'debug'
-      timestamp: true
-      filename: 'log'
-      label: module.filename
-    )
-  ]
-)
+RoundRobinDispatcher = utils.RoundRobinDispatcher
+
+logger = utils.logging.newFileLogger module.filename, 'log'
 
 http.globalAgent.maxSockets = 5
 

@@ -14,7 +14,7 @@ exports.sync = sync = (startDate, endDate, location) ->
     .then (data) ->
       parser.bulletin.f JSON.parse(data)
     .then (bulletinData) ->
-      dateRange = utils.weekDayRange startDate, endDate
+      dateRange = utils.common.weekDayRange startDate, endDate
       Q.all _.map(compositeIndex, (symbol) ->
         Q.nfcall fs.readFile, path.join(location.stockFeedDir, "SH#{symbol}.txt"), encoding: 'utf-8'
         .then parser.stockFeed.f

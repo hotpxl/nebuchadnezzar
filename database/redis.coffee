@@ -1,18 +1,9 @@
 redis = require 'redis'
-winston = require 'winston'
 Q = require 'q'
+utils = require '../utils'
 connectionPool = {}
 
-logger = new (winston.Logger)(
-  transports: [
-    new (winston.transports.Console)(
-      level: 'debug'
-      colorize: true
-      timestamp: true
-      label: module.filename
-    )
-  ]
-)
+logger = utils.logging.newConsoleLogger module.filename
 
 closeConnection = (db) ->
   connectionPool[db].count -= 1
