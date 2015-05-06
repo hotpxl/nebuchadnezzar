@@ -54,12 +54,14 @@ if require.main == module
           entry = JSON.parse entry
           Q.ninvoke targetRedis, 'get', entry.id
           .then (targetEntry) ->
-            bar.tick 1
+            # bar.tick 1
             if JSON.parse(targetEntry)?.translation
+              process.stdout.write '\rskip'
               return
             else
               src = entry.title + '\n' + entry.content.replace(/<br>|\u001d|\u2586|\u2587/g, ' ')
               currentTranslator = round.get()
+              process.stdout.write '\r'
               round.status()
               currentTranslator src
               .then (res) ->
