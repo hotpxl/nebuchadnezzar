@@ -24,7 +24,7 @@ translate = (q) ->
         if 0 < retry
           logger.warn 'retry request',
             err: err
-            response: response
+            statusCode: response?.statusCode
             body: body
             query: q
           sleep.sleep 1
