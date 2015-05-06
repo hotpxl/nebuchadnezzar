@@ -29,12 +29,15 @@ class RoundRobinDispatcher
       incr()
     ret =
       if not check()
+        @recent.push -1
         @fallback
       else
         @recent.push @toSchedule
         @pairs[@toSchedule].count += 1
         while speedTestPeriod < @recent.length
-          @pairs[@recent.shift()].count -= 1
+          out = @recent.shift()
+          if out != -1
+            @pairs[out].count -= 1
         @pairs[@toSchedule].action
     incr()
     ret
