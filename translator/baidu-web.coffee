@@ -42,11 +42,19 @@ translate = (q) ->
     , (err, response, body) ->
       if err
         if 0 < retry
+          logger.warn 'retry request',
+            err: err
+            query: JSON.stringify q
+          sleep.sleep 1
           loo retry - 1
         else
           deferred.reject err
       else if response.statusCode != 200
         if 0 < retry
+          logger.warn 'retry request',
+            statusCode: response.statusCode
+            query: JSON.stringify q
+          sleep.sleep 1
           loo retry - 1
         else
           deferred.reject new Error("translation returned status code #{response.statusCode}")
