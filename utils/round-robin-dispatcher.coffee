@@ -36,10 +36,11 @@ class RoundRobinDispatcher
     else
       @counter[@toSchedule] += 1
       @pairs[@toSchedule].action
+    @toSchedule = (@toSchedule + 1) % @pairs.length
 
   status: ->
     s = _.sum @counter
-    console.log [(i / s).toFixed(2) for i in @counter].join(' ')
+    console.log ((i / s).toFixed(2) for i in @counter).join ' '
 
 module.exports = RoundRobinDispatcher
 
