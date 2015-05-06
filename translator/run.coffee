@@ -59,7 +59,7 @@ if require.main == module
               process.stdout.write '\rskip'
               return
             else
-              src = entry.title + '\n' + entry.content.replace(/<br>|\u001d|\u2586|\u2587/g, ' ')
+              src = entry.title + '\n' + entry.content.replace(/<br>|\u001d|\u2586|\u2587|\u258c|\u00b7|\u0000/g, ' ')
               currentTranslator = round.get()
               process.stdout.write '\r'
               round.status()
