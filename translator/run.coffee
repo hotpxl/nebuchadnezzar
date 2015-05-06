@@ -58,9 +58,9 @@ if require.main == module
             if JSON.parse(targetEntry)?.translation
               return
             else
-              src = entry.title + '\n' + entry.content.replace(/<br>/g, '')
-              translator = round.get()
-              translator src
+              src = entry.title + '\n' + entry.content.replace(/<br>|\u001d|\u2586|\u2587/g, ' ')
+              currentTranslator = round.get()
+              currentTranslator src
               .then (res) ->
                 d =
                   translation: res

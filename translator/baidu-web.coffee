@@ -28,7 +28,7 @@ loggerFile = new (winston.Logger)(
 
 translate = (q) ->
   # preprocessing
-  q = q.trim().replace /\u001d|\u2586/g, ' '
+  q = q.trim()
   query =
     from: 'zh'
     to: 'en'
