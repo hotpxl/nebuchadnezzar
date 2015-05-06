@@ -5,7 +5,9 @@ _ = require 'lodash'
 Progress = require 'progress'
 winston = require 'winston'
 translator = require './'
+secret = require './baidu-secret'
 database = require '../database'
+RoundRobinDispatcher = require '../utils/round-robin-dispatcher'
 
 logger = new (winston.Logger)(
   transports: [
@@ -18,9 +20,19 @@ logger = new (winston.Logger)(
   ]
 )
 
-http.globalAgent.maxSockets = 2
+http.globalAgent.maxSockets = 10
 
 if require.main == module
+  availableTranslators =
+    _.map secret.apiKeys, (key) ->
+      (q) ->
+        translator.baidu.translate key, q
+  pairs = do ->
+    for i in availableTranslators
+      duration: 3600 * 1000 / 20000
+      threshold: 100
+      action: i
+  round = new RoundRobinDispatcher(pairs, translator.baiduWeb.translate)
   Q.all [
     database.redis.getConnection 0
     database.redis.getConnection 1
@@ -47,7 +59,8 @@ if require.main == module
               return
             else
               src = entry.title + '\n' + entry.content.replace(/<br>/g, '')
-              translator.baiduWeb.translate src
+              translator = round.get()
+              translator src
               .then (res) ->
                 d =
                   translation: res
@@ -55,7 +68,7 @@ if require.main == module
                 logger.debug 'translated',
                   src: src
                   dst: res
-      Q.all _.map(_.range(10), ->
+      Q.all _.map(_.range(100), ->
         loo = ->
           val = keys.pop()
           if val

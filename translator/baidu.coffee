@@ -2,13 +2,12 @@ querystring = require 'querystring'
 request = require 'request'
 _ = require 'lodash'
 Q = require 'q'
-secret = require './baidu-secret'
 
-translate = (q) ->
+translate = (key, q) ->
   query = querystring.stringify
     from: 'zh'
     to: 'en'
-    client_id: secret.api_key
+    client_id: key
     q: q
   deferred = Q.defer()
   request "http://openapi.baidu.com/public/2.0/bmt/translate?#{query}", (err, response, body) ->
@@ -24,7 +23,10 @@ translate = (q) ->
 exports.translate = translate
 
 if require.main == module
-  translate '一群乌合之众 又出来乱叫了！~~~\n一跌 就看空 叫空··哈哈··· 一涨 就一片 叫好！'
-  .then (i) ->
-    console.log i
+  secret = require './baidu-secret'
+  Q.all _.map(secret.apiKeys, (key) ->
+    translate key, '一群乌合之众 又出来乱叫了！~~~\n一跌 就看空 叫空··哈哈··· 一涨 就一片 叫好！'
+    .then (i) ->
+      console.log i
+  )
   .done()
