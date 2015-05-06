@@ -9,7 +9,6 @@ logger = utils.logging.newConsoleLogger module.filename
 loggerFile = utils.logging.newFileLogger module.filename 'baidu-web.log'
 
 translate = (q) ->
-  # preprocessing
   q = q.trim()
   query =
     from: 'zh'
