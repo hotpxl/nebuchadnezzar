@@ -60,6 +60,7 @@ if require.main == module
             else
               src = entry.title + '\n' + entry.content.replace(/<br>|\u001d|\u2586|\u2587/g, ' ')
               currentTranslator = round.get()
+              round.status()
               currentTranslator src
               .then (res) ->
                 d =
