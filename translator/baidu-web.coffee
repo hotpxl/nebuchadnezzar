@@ -6,7 +6,7 @@ utils = require '../utils'
 
 logger = utils.logging.newConsoleLogger module.filename
 
-loggerFile = utils.logging.newFileLogger module.filename 'baidu-web.log'
+loggerFile = utils.logging.newFileLogger module.filename, 'baidu-web.log'
 
 translate = (q) ->
   q = q.trim()

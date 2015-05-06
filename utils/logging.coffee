@@ -18,7 +18,7 @@ newFileLogger = (label, filename) ->
     transports: [
       new (winston.transports.File)(
         level: 'debug'
-        timestamp: ture
+        timestamp: true
         filename: filename
         label: label
       )
