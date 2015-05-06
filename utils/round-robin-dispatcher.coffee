@@ -37,8 +37,7 @@ class RoundRobinDispatcher
 
   status: ->
     s = _.sum @counter
-    process.stdout.write ((i / s).toFixed(2) for i in @counter).join ' '
+    (i / s).toFixed(2) for i in @counter
 
 module.exports = RoundRobinDispatcher
-
 
