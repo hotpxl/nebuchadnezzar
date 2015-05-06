@@ -51,7 +51,7 @@ if require.main == module
               process.stdout.write '\rskip'
               return
             else
-              src = (entry.title + '\n' + entry.content).replace(/<br>|\u001d|\u2586|\u2587|\u258c|\u00b7|\u0000/g, ' ').trim()
+              src = (entry.title + '\n' + entry.content).replace(/<br>|\u001d|\u2586|\u2587|\u258c|\u00b7|\u0000|\uff0b|\u002e/g, ' ').trim()
               currentTranslator = round.get()
               process.stdout.write '\r'
               process.stdout.write JSON.stringify(round.status())
