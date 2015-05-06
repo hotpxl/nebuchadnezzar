@@ -1,11 +1,13 @@
+assert = require('chai').assert
+
 class TokenBucket
   constructor: (@duration, @threshold) ->
     @duration = parseInt @duration
     @threshold = parseInt @threshold
-    if not @duration
-      throw new TypeError('duration required as an int')
-    if not @threshold
-      throw new TypeError('threshold required as an int')
+    assert.isNumber @duration, 'duration required as int'
+    assert.isFalse isNaN(@duration), 'duration required as int'
+    assert.isNumber @threshold, 'threshold required as int'
+    assert.isFalse isNaN(@threshold), 'threshold required as int'
     @lastTime = (new Date()).getTime()
     @currentVolume = 0
 

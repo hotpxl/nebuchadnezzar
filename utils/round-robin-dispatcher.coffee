@@ -1,4 +1,5 @@
 _ = require 'lodash'
+assert = require('chai').assert
 TokenBucket = require './token-bucket'
 
 class RoundRobinDispatcher
@@ -6,21 +7,14 @@ class RoundRobinDispatcher
     @pairs = []
     @counter = []
     @toSchedule = 0
-    if pairs.length == 0
-      throw new TypeError('pairs required')
+    assert.ok pairs?.length, 'pairs required'
     for p in pairs
-      if not p.duration
-        throw new TypeError('field duration required')
-      if not p.threshold
-        throw new TypeError('field threshold required')
-      if not p.action
-        throw new TypeError('field action required')
+      assert.ok p.action, 'field action required'
       @pairs.push
         action: p.action
         bucket: new TokenBucket(p.duration, p.threshold)
       @counter.push 0
-    if not fallback
-      throw new TypeError('callback required')
+    assert.ok fallback, 'fallback required'
     @fallback = fallback
     @counter.push 0
 
