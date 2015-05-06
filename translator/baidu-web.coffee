@@ -27,7 +27,8 @@ loggerFile = new (winston.Logger)(
 )
 
 translate = (q) ->
-  q = q.trim()
+  # preprocessing
+  q = q.trim().replace /\u001d|\u2586/g, ' '
   query =
     from: 'zh'
     to: 'en'
@@ -68,8 +69,8 @@ translate = (q) ->
 exports.translate = translate
 
 if require.main == module
-  a = '福音\n日本发生了一件千真万确的事：有人为了装修家里，拆开了墙；日式住宅的墙壁通常是中间架了木板后，两边批上泥土，其实里面是空的。他拆墙壁的时候，发现一只\u001d 壁虎被困'
-  translate a.replace(/\u001d/g, '')
+  a = '福音\n日本发生了一件千真万确的事：有人为了装修家里，拆开了墙；日式住宅的墙壁通常是中间架了木板后，两边批上泥土，其实里面是空的。他拆墙壁的时候，发现一只壁虎被困\u2586'
+  translate a.replace(/\u001d|\u2586/g, ' ')
   .then (i) ->
     console.log i
   .done()
