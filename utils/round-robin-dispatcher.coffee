@@ -40,7 +40,7 @@ class RoundRobinDispatcher
 
   status: ->
     s = _.sum @counter
-    console.log ((i / s).toFixed(2) for i in @counter).join ' '
+    process.stdout.write ((i / s).toFixed(2) for i in @counter).join ' '
 
 module.exports = RoundRobinDispatcher
 
