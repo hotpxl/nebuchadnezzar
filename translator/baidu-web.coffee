@@ -46,10 +46,10 @@ translate = (q) ->
       else
         data = JSON.parse body
         if not data.trans_result
-          if data?.error == 3
-            loggerFile.warn 'parse error skipped',
+          if data?.error == 3 or data?.error == 8
+            loggerFile.warn 'error skipped',
               data: data
-              query: JSON.stringify q
+              query: q
             deferred.resolve ''
           else if 0 < retry
             logger.warn 'retry request',
@@ -68,7 +68,8 @@ translate = (q) ->
 exports.translate = translate
 
 if require.main == module
-  translate '一群乌合之众 又出来乱叫了！~~~\n一跌 就看空 叫空··哈哈··· 一涨 就一片 叫好！'
+  a = '福音\n日本发生了一件千真万确的事：有人为了装修家里，拆开了墙；日式住宅的墙壁通常是中间架了木板后，两边批上泥土，其实里面是空的。他拆墙壁的时候，发现一只\u001d 壁虎被困'
+  translate a.replace(/\u001d/g, '')
   .then (i) ->
     console.log i
   .done()
