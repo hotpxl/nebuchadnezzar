@@ -2,10 +2,12 @@ _ = require 'lodash'
 assert = require('chai').assert
 TokenBucket = require './token-bucket'
 
+speedTestPeriod = 100
+
 class RoundRobinDispatcher
   constructor: (pairs, fallback) ->
     @pairs = []
-    @counter = []
+    @recent = []
     @toSchedule = 0
     assert.ok pairs?.length, 'pairs required'
     for p in pairs
@@ -13,31 +15,32 @@ class RoundRobinDispatcher
       @pairs.push
         action: p.action
         bucket: new TokenBucket(p.duration, p.threshold)
-      @counter.push 0
+        count: 0
     assert.ok fallback, 'fallback required'
     @fallback = fallback
-    @counter.push 0
 
   get: ->
     lastScheduled = (@toSchedule - 1) %% @pairs.length
-    check = (toSchedule) =>
-      @pairs[toSchedule].bucket.get()
+    check = =>
+      @pairs[@toSchedule].bucket.get()
     incr = =>
       @toSchedule = (@toSchedule + 1) % @pairs.length
-    while @toSchedule != lastScheduled and not check(@toSchedule)
+    while @toSchedule != lastScheduled and not check()
       incr()
-    if @toSchedule == lastScheduled and not check(@toSchedule)
-      @counter[@counter.length - 1] += 1
-      incr()
-      @fallback
-    else
-      @counter[@toSchedule] += 1
-      incr()
-      @pairs[@toSchedule].action
+    ret =
+      if not check()
+        @fallback
+      else
+        @recent.push @toSchedule
+        @pairs[@toSchedule].count += 1
+        while speedTestPeriod < @recent.length
+          @pairs[@recent.shift()].count -= 1
+        @pairs[@toSchedule].action
+    incr()
+    ret
 
   status: ->
-    s = _.sum @counter
-    (i / s).toFixed(2) for i in @counter
+    (i.count / speedTestPeriod).toFixed(2) for i in @pairs
 
 module.exports = RoundRobinDispatcher
 
