@@ -20,7 +20,7 @@ logger = new (winston.Logger)(
   ]
 )
 
-http.globalAgent.maxSockets = 10
+http.globalAgent.maxSockets = 5
 
 if require.main == module
   availableTranslators =
@@ -69,7 +69,7 @@ if require.main == module
                 logger.debug 'translated',
                   src: src
                   dst: res
-      Q.all _.map(_.range(100), ->
+      Q.all _.map(_.range(4 * http.globalAgent.maxSockets * (availableTranslators.length + 1)), ->
         loo = ->
           val = keys.pop()
           if val
