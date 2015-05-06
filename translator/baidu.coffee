@@ -4,7 +4,6 @@ _ = require 'lodash'
 Q = require 'q'
 
 translate = (key, q) ->
-  q = q.trim()
   query = querystring.stringify
     from: 'zh'
     to: 'en'
