@@ -41,9 +41,15 @@ translate = (q) ->
       form: query
     , (err, response, body) ->
       if err
-        deferred.reject err
+        if 0 < retry
+          loo retry - 1
+        else
+          deferred.reject err
       else if response.statusCode != 200
-        deferred.reject new Error("translation returned status code #{response.statusCode}")
+        if 0 < retry
+          loo retry - 1
+        else
+          deferred.reject new Error("translation returned status code #{response.statusCode}")
       else
         data = JSON.parse body
         if not data.trans_result
