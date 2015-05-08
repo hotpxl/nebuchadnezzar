@@ -76,14 +76,19 @@ if require.main == module
                 #   src: src
                 #   dst: res
       Q.all _.map(_.range(averageLoad * Math.min(http.globalAgent.maxSockets, 50) * (availableTranslators.length + 1)), ->
+        deferred = Q.defer()
         loo = ->
           val = keys.pop()
           if val
             translateOne val
             .then loo
+            .fail (err) ->
+              deferred.reject err
+            .done()
           else
-            Q()
+            deferred.resolve()
         loo()
+        deferred.promise
       )
     .then ->
       targetRedis.closeConnection()
