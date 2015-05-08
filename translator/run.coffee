@@ -70,7 +70,7 @@ if require.main == module
                 logger.info "transed target #{entry.id}"
                 d =
                   translation: res
-                rargetRedis.set "#{entry.id}", JSON.stringify(d)
+                targetRedis.set "#{entry.id}", JSON.stringify(d)
                 return
                 # logger.debug 'translated',
                 #   src: src
