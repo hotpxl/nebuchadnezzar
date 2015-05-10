@@ -10,11 +10,10 @@ secret = require './baidu-secret'
 
 RoundRobinDispatcher = utils.RoundRobinDispatcher
 
-# logger = utils.logging.newFileLogger module.filename, 'log'
-logger = utils.logging.newConsoleLogger module.filename
+logger = utils.logging.newFileLogger module.filename, 'log'
 
 http.globalAgent.maxSockets = 5
-averageLoad = 10
+averageLoad = 5
 
 if require.main == module
   availableTranslators =
@@ -43,15 +42,11 @@ if require.main == module
         width: 100
       )
       translateOne = (key) ->
-        logger.info "getting source #{key}"
         Q.ninvoke sourceRedis, 'get', key
         .then (entry) ->
-          logger.info "get source #{key}"
           entry = JSON.parse entry
-          logger.info "getting target #{entry.id}"
           Q.ninvoke targetRedis, 'get', entry.id
           .then (targetEntry) ->
-            logger.info "get target #{entry.id}"
             bar.tick 1
             if JSON.parse(targetEntry)?.translation
               process.stdout.write '\rskip'
@@ -64,17 +59,14 @@ if require.main == module
               currentTranslator = round.get()
               process.stdout.write '\r'
               process.stdout.write JSON.stringify(round.status())
-              logger.info "trans target #{entry.id}"
               currentTranslator src
               .then (res) ->
-                logger.info "transed target #{entry.id}"
                 d =
                   translation: res
                 targetRedis.set "#{entry.id}", JSON.stringify(d)
-                return
-                # logger.debug 'translated',
-                #   src: src
-                #   dst: res
+                logger.debug 'translated',
+                  src: src
+                  dst: res
       Q.all _.map(_.range(averageLoad * Math.min(http.globalAgent.maxSockets, 50) * (availableTranslators.length + 1)), ->
         deferred = Q.defer()
         loo = ->
