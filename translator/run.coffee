@@ -55,6 +55,7 @@ if require.main == module
               src = (entry.title + '\n' + entry.content)
               .replace /<br>/g, ' '
               .replace /[^0-9a-zA-Z\u4e00-\u9fa5]/g, ' '
+              .substring 0, 2000
               .trim()
               currentTranslator = round.get()
               process.stdout.write '\r'
