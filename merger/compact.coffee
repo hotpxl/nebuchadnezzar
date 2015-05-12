@@ -26,9 +26,9 @@ sync = ->
           deferred = Q.defer()
           loo = ->
             val = symbolKeys.pop()
-            logger.info 'processing',
-              key: val
             if val
+              logger.info 'processing',
+                key: val
               Q.ninvoke keyRedis, 'get', val
               .then (item) ->
                 payload = JSON.parse item
