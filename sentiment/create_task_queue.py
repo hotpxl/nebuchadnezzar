@@ -3,6 +3,7 @@ from __future__ import print_function
 import logging
 import argparse
 import redis
+import re
 
 # Logger
 logger = logging.getLogger(__name__)
@@ -15,10 +16,13 @@ logger.addHandler(ch)
 
 def load_symbol_keys(symbol):
     symbol_redis = redis.StrictRedis(password='whatever')
-    prefix = '{}:*'.format(symbol)
-    keys = symbol_redis.keys(prefix)
+    if symbol != '*':
+        prefix = '{}:*'.format(symbol)
+        keys = symbol_redis.keys(prefix)
+    else:
+        keys = list(filter(lambda x: x != 'progress', symbol_redis.keys('*')))
     logger.info('{} keys'.format(len(keys)))
-    return list(map(lambda x: x[len(prefix) - 1:], keys))
+    return list(map(lambda x: re.search('\d+', x).group(), keys))
 
 def push_task_queue(keys):
     assert(0 < len(keys))
