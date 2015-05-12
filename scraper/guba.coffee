@@ -96,7 +96,7 @@ parseAll = (redis) ->
     )
 
 if require.main == module
-  database.redis.getConnection(0)
+  database.redis.getConnection 0
   .then (redis) ->
     parseAll redis
     .then ->

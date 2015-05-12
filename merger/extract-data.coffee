@@ -6,7 +6,7 @@ Q = require 'q'
 utils = require '../utils'
 parser = require '../parser'
 
-exports.sync = sync = (startDate, endDate, location) ->
+sync = (startDate, endDate, location) ->
   Q.nfcall fs.readFile, location.compositeIndexFile, encoding: 'ascii'
   .then (data) ->
     compositeIndex = JSON.parse data
@@ -33,6 +33,8 @@ exports.sync = sync = (startDate, endDate, location) ->
                 close: close
           Q.nfcall fs.writeFile, path.join(location.outputDir, "#{symbol}.json"), JSON.stringify(pairedData), encoding: 'ascii'
       )
+
+exports.sync = sync
 
 if require.main == module
   do (parser) ->
