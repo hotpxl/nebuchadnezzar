@@ -39,9 +39,11 @@ sync = ->
                   positiveCount: 0
                   negativeCount: 0
                 accumulator[symbol][publishDate].clickCount += clickCount
-                Q.ninvoke sentimentRedis, 'get', val
+                Q.ninvoke sentimentRedis, 'get', item.id
                 .then (sent) ->
                   sent = parseFloat sent
+                  logger.info 'sentiment',
+                    sent: sent
                   if sent < threshold
                     accumulator[symbol][publishDate].negativeCount += 1
                   else
