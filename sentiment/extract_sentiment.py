@@ -15,10 +15,13 @@ logger.addHandler(ch)
 
 def load_symbol_keys(symbol):
     symbol_redis = redis.StrictRedis(password='whatever')
-    prefix = '{}:*'.format(symbol)
-    keys = symbol_redis.keys(prefix)
+    if symbol != '*':
+        prefix = '{}:*'.format(symbol)
+        keys = symbol_redis.keys(prefix)
+    else:
+        keys = list(filter(lambda x: x != 'progress', symbol_redis.keys('*')))
     logger.info('{} keys'.format(len(keys)))
-    return list(map(lambda x: x[len(prefix) - 1:], keys))
+    return list(map(lambda x: re.search('\d+', x).group(), keys))
 
 def extract(keys):
     ret = []
