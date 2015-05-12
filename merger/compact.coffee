@@ -39,7 +39,7 @@ sync = ->
                   positiveCount: 0
                   negativeCount: 0
                 accumulator[symbol][publishDate].clickCount += clickCount
-                Q.ninvoke sentimentRedis, 'get', item.id
+                Q.ninvoke sentimentRedis, 'get', payload.id
                 .then (sent) ->
                   sent = parseFloat sent
                   logger.info 'sentiment',
