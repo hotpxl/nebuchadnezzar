@@ -15,26 +15,27 @@ translate = (q) ->
     query: q
   deferred = Q.defer()
   loo = (retry) ->
-    request
+    maybeRetry = (rejection, status) ->
+      status ?= rejection
+      if 0 < retry
+        logger.warn 'retry request', status
+        sleep.sleep 1
+        loo retry - 1
+      else
+        deferred.reject rejection
+    handle = request
       url: 'http://fanyi.baidu.com/v2transapi'
       method: 'POST'
       form: query
     , (err, response, body) ->
-      maybeRetry = (rejection) ->
-        if 0 < retry
-          logger.warn 'retry request',
-            err: err
-            statusCode: response?.statusCode
-            body: body
-            query: q
-          sleep.sleep 1
-          loo retry - 1
-        else
-          deferred.reject rejection
       if err
-        maybeRetry err
+        maybeRetry err,
+          err: err
+          query: q
       else if response.statusCode != 200
-        maybeRetry new Error("translation returned status code #{response.statusCode}")
+        maybeRetry new Error("translation returned status code #{response.statusCode}"),
+          statusCode: response?.statusCode
+          query: q
       else
         data = JSON.parse body
         if not data.trans_result
@@ -44,10 +45,14 @@ translate = (q) ->
               query: q
             deferred.resolve ''
           else
-            maybeRetry new Error("translation failed with reply: #{body}")
+            maybeRetry new Error("translation failed with reply: #{body}"),
+              body: body
+              query: q
         else
           res = _.pluck(data.trans_result.data, 'dst').join '\n'
           deferred.resolve res
+    handle.on 'error', (error) ->
+      maybeRetry error
   loo 5
   deferred.promise
 
