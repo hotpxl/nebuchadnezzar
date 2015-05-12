@@ -22,7 +22,7 @@ def load_symbol_keys(symbol):
     else:
         keys = list(filter(lambda x: x != 'progress', symbol_redis.keys('*')))
     logger.info('{} keys'.format(len(keys)))
-    return list(map(lambda x: re.search('\d+', x).group(), keys))
+    return list(map(lambda x: re.search('\d+$', x).group(), keys))
 
 def push_task_queue(keys):
     assert(0 < len(keys))
