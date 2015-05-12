@@ -28,7 +28,8 @@ def push_task_queue(keys):
     assert(0 < len(keys))
     target_redis = redis.StrictRedis(db=2, password='whatever')
     target_redis.delete('tasks')
-    target_redis.rpush('tasks', *keys)
+    for i in keys:
+        target_redis.rpush('tasks', i)
 
 if __name__ == '__main__':
     # Parser
