@@ -13,7 +13,6 @@ threshold = 0.5
 sync = ->
   symbolList = do ->
     JSON.parse fs.readFileSync('../data/sse_50.json', 'ascii')
-  symbolList = ['600036']
   database.redis.getConnection 0
   .then (keyRedis) ->
     database.redis.getConnection 2
