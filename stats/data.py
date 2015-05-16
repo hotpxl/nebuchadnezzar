@@ -10,6 +10,6 @@ def sse_indices():
     return np.asarray(sse_indices)
 
 def get_merged(index, *fields):
-    with open(os.path.join(p, '../tmp2/{}.json'.format(index))) as f:
+    with open(os.path.join(p, '../tmp3/{}.json'.format(index))) as f:
         data = json.load(f)
     return np.asarray([[x[j] for j in fields] for x in data])
