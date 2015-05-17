@@ -23,14 +23,18 @@ sync = (startDate, endDate, location) ->
           pairedData = []
           _.forEach dateRange, (date) ->
             if stockFeedData[date]?.volume?
-              readCount = symbolBulletin[date]?.readCount ? pairedData[pairedData.length - 1]?.readCount ? 0
+              clickCount = symbolBulletin[date]?.clickCount ? pairedData[pairedData.length - 1]?.clickCount ? 0
+              positiveCount = symbolBulletin[date]?.positiveCount ? pairedData[pairedData.length - 1]?.positiveCount ? 0
+              negativeCount = symbolBulletin[date]?.negativeCount ? pairedData[pairedData.length - 1]?.negativeCount ? 0
               volume = stockFeedData[date].volume
               close = stockFeedData[date]?.close ? pairedData[pairedData.length - 1]?.close ? 0
               pairedData.push
                 date: date
-                readCount: readCount
                 volume: volume
                 close: close
+                clickCount: clickCount
+                positiveCount: positiveCount
+                negativeCount: negativeCount
           Q.nfcall fs.writeFile, path.join(location.outputDir, "#{symbol}.json"), JSON.stringify(pairedData), encoding: 'ascii'
       )
 
