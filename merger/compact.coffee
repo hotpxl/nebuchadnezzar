@@ -65,9 +65,9 @@ sync = ->
 exports.sync = sync
 
 if require.main == module
-  parser = new (require('argparse').ArgumentParser)(
-    description: 'compact data'
-  )
-  args = parser.parseArgs()
+  # parser = new (require('argparse').ArgumentParser)(
+  #   description: 'compact data'
+  # )
+  # args = parser.parseArgs()
   sync()
   .done()
