@@ -257,7 +257,7 @@ model = statsmodels.tsa.api.VAR(data)
 
 \begin{equation}
   \label{f_test:3}
-  RSS_{0}=\sum_{i=1}^{m}\hat{e}_t^2.
+  RSS_{0}=\sum_{i=1}^{m}\hat{e}_{t}^2.
 \end{equation}
 
 使用同样的方法，处理非约束方程如式 \ref{f_test:4} 所示，得到非约束方程的残差平方和如式 \ref{f_test:5} 。
@@ -265,9 +265,89 @@ model = statsmodels.tsa.api.VAR(data)
 \begin{equation}
   \label{f_test:4}
   y_{t}=a_{0}+\sum_{i=1}^{m}a_{i}y_{t-i}+\sum_{i=1}^{m}b_{i}x_{t-i}+u_{t}.
-  \
+\end{equation}
 
-;; student tests
+\begin{equation}
+  \label{f_test:5}
+  RSS_{1}=\sum_{i=1}^{m}\hat{u}_{t}^2.
+\end{equation}
+
+计算检验统计量如式 \ref{f_test:6} 。
+
+\begin{equation}
+  \label{f_test:6}
+  S_{1}=\frac{(RSS_{0}-RSS_{1})/p}{RSS_{1}/(m-2p-1)}\sim F_{p,m-2p-1}.
+\end{equation}
+
+如果 $S_{1}$ 大于指定的临界值，则拒绝原假设 $H_{0}$ 。
+
+在残差平方和 $\chi^{2}$ 检验中，则最后一步检验统计量如式 \ref{f_test:7} 。
+
+\begin{equation}
+  \label{f_test:7}
+  S_{1}=\frac{m(RSS_{0}-RSS_{1})}{RSS_{1}}\sim \chi^{2}(p).
+\end{equation}
+
+对浦发银行 (600000) 在 2012 年 5 月 1 日至 2015 年 4 月 1 日之间的成交量和对应日期的讨论帖点击量进行格兰杰因果关系检验。程序逻辑如代码 \ref{f_test:8} 所示。基于之前的结果，已经知道最佳落后期为 $3$ ，而在进行格兰杰因果关系检验的时候，需要输入一个最大落后期，然后程序会从 $1$ 到指定的最大落后期都计算统计检验量和对应的 $p$ 值。所以在程序代码中指定最大落后期为 $5$ 。得到输出如代码 \ref{f_test:9} 所示。
+
+\begin{minipage}{\textwidth}
+  \begin{lstlisting}[caption=浦发银行 (600000) 格兰杰因果关系检验, label=f_test:8]
+statsmodels.tsa.api.stattools.\
+grangercausalitytests(d, 5, verbose=True)
+  \end{lstlisting}
+\end{minipage}
+
+\begin{minipage}{\textwidth}
+  \begin{lstlisting}[caption=浦发银行 (600000) 检验结果, label=f_test:9]
+Granger Causality
+number of lags (no zero) 1
+ssr based F test:         F=11.2091 , p=0.0009  , df_denom=701, df_num=1
+ssr based chi2 test:   chi2=11.2571 , p=0.0008  , df=1
+likelihood ratio test: chi2=11.1680 , p=0.0008  , df=1
+parameter F test:         F=11.2091 , p=0.0009  , df_denom=701, df_num=1
+
+
+Granger Causality
+number of lags (no zero) 2
+ssr based F test:         F=2.8522  , p=0.0584  , df_denom=698, df_num=2
+ssr based chi2 test:   chi2=5.7453  , p=0.0565  , df=2
+likelihood ratio test: chi2=5.7219  , p=0.0572  , df=2
+parameter F test:         F=2.8522  , p=0.0584  , df_denom=698, df_num=2
+
+
+Granger Causality
+number of lags (no zero) 3
+ssr based F test:         F=2.1024  , p=0.0986  , df_denom=695, df_num=3
+ssr based chi2 test:   chi2=6.3709  , p=0.0949  , df=3
+likelihood ratio test: chi2=6.3421  , p=0.0961  , df=3
+parameter F test:         F=2.1024  , p=0.0986  , df_denom=695, df_num=3
+
+
+Granger Causality
+number of lags (no zero) 4
+ssr based F test:         F=1.3906  , p=0.2355  , df_denom=692, df_num=4
+ssr based chi2 test:   chi2=5.6347  , p=0.2281  , df=4
+likelihood ratio test: chi2=5.6122  , p=0.2300  , df=4
+parameter F test:         F=1.3906  , p=0.2355  , df_denom=692, df_num=4
+
+
+Granger Causality
+number of lags (no zero) 5
+ssr based F test:         F=1.2365  , p=0.2902  , df_denom=689, df_num=5
+ssr based chi2 test:   chi2=6.2814  , p=0.2798  , df=5
+likelihood ratio test: chi2=6.2534  , p=0.2823  , df=5
+parameter F test:         F=1.2365  , p=0.2902  , df_denom=689, df_num=5
+  \end{lstlisting}
+\end{minipage}
+
+分析格兰杰因果关系检验中假设检验的结果，其中 $p$ 值随落后期的变化如图 \ref{f_test:11} 所示。理所应当地，随着落后期的增加，成交量自己包含的信息越来越多，所需要的由点击量的信息越来越少， $p$ 值单调递增。如果选择显著性水平 $\alpha=0.05$ ，则在落后期为 $2$ 的时候就已经可以接受零假设 $H_{0}$ ，认为讨论帖点击量对于成交量没有格兰杰因果关系。
+
+\begin{figure}
+  \centering
+  \includegraphics[width=\textwidth]{plots/granger_causality_test_1.png}
+  \caption{浦发银行 (600000) 格兰杰因果关系检验 $p$ 值}
+  \label{f_test:10}
+\end{figure}
 
 ;; sliding window trick
 
