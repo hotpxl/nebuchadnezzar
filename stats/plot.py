@@ -34,9 +34,14 @@ def twin_x(data, labels=None, x=None):
     plt.show()
 
 def single_x(data, x=None):
+    fig, ax0 = plt.subplots()
     if not isinstance(data, np.ndarray):
         data = np.asarray(data)
     data = data.flatten()
     if x == None:
         x = np.arange(data.shape[0])
-    plt.plot(x, data)
+    elif isinstance(x[0], date):
+        ax0.fmt_xdata = matplotlib.dates.DateFormatter('%Y-%m-%d')
+        fig.autofmt_xdate()
+    ax0.plot(x, data)
+    plt.show()
