@@ -13,3 +13,8 @@ def get_merged(index, *fields):
     with open(os.path.join(p, '../tmp3/{}.json'.format(index))) as f:
         data = json.load(f)
     return np.asarray([[x[j] for j in fields] for x in data])
+
+def get_merged_old(index, *fields):
+    with open(os.path.join(p, '../tmp2/{}.json'.format(index))) as f:
+        data = json.load(f)
+    return np.asarray([[x[j] for j in fields] for x in data])

@@ -120,7 +120,7 @@ Demo here
 如果没有任何 $x$ 的落后期被留在模型中，即可以定性地认为从某种意义上 $b_{i}=0$
 对于所有的 ${i}$ 都成立，无格兰杰因果关系的零假设成立。
 
-\section{落后期计算}
+\section{落后期计算方法}
 
 计算时间序列 $x$ 的落后期，可以使用多种方法。在本文中，主要使用以下四种方法。
 
@@ -151,6 +151,8 @@ Bayesian information criterion 的定义如下。
 在式 \ref{bic:0} 中， $n$ 为数据点的个数， $k$ 为自由变量的个数。
 
 直观上可以理解， $-2\cdot \ln \hat{L}$ 项使得模型尽可能拟合，这就要求落后期越大越好，而 $k\cdot \ln n$ 项使得模型不是很大，防止过拟合的情况出现。其他几种选取落后期的方法本质上大同小异，不再详细介绍。
+
+\section{落后期计算}
 
 不妨尝试建立基于成交量和讨论贴点击量的向量自回归模型，本文使用了 Python 的数据挖掘框架 Statsmodels\cite{statsmodels} 。该框架对于成熟的线性和非线性数据模型都有准确高效的实现，并且自带简单的画图功能。取浦发银行 (600000) 在 2012 年 5 月 1 日至 2015 年 4 月 1  日之间的过往成交量和对应日期的讨论帖点击量，如图 \ref{auto_regression:0} 所示。
 
@@ -196,16 +198,18 @@ Bayesian information criterion 的定义如下。
   \end{tabularx}
 \end{table}
 
-\begin{minipage}{\textwidth}
-  \begin{lstlisting}[caption=落后期选择逻辑, label=auto_regression:2]
+\begin{figure}
+  \begin{minipage}{\textwidth}
+    \begin{lstlisting}[caption=落后期选择逻辑, label=auto_regression:2]
 data = pandas.DataFrame({'volume': volume,
   'clickCount': click_count})
 data.index = pandas.DatetimeIndex(dates)
 model = statsmodels.tsa.api.VAR(data)
-  \end{lstlisting}
-\end{minipage}
+    \end{lstlisting}
+  \end{minipage}
+\end{figure}
 
-\section{假设检验}
+\section{假设检验方法}
 
 为了检验 $x$ 对 $y$ 的格兰杰因果关系，需要检验 $y$ 的相量自回归模型中没有 $x$ 的过去值的影响。需要检验向量自回归模型中 $x$ 的系数的大小。回顾格兰杰因果关系模型如式 \ref{null_hypothesis:0} 所示，可以做出零假设 $x$ 对 $y$ 并没有格兰杰因果关系，如式 \ref{null_hypothesis:1}所示。
 
@@ -288,70 +292,198 @@ model = statsmodels.tsa.api.VAR(data)
   S_{1}=\frac{m(RSS_{0}-RSS_{1})}{RSS_{1}}\sim \chi^{2}(p).
 \end{equation}
 
+\section{假设检验}
+
 对浦发银行 (600000) 在 2012 年 5 月 1 日至 2015 年 4 月 1 日之间的成交量和对应日期的讨论帖点击量进行格兰杰因果关系检验。程序逻辑如代码 \ref{f_test:8} 所示。基于之前的结果，已经知道最佳落后期为 $3$ ，而在进行格兰杰因果关系检验的时候，需要输入一个最大落后期，然后程序会从 $1$ 到指定的最大落后期都计算统计检验量和对应的 $p$ 值。所以在程序代码中指定最大落后期为 $5$ 。得到输出如代码 \ref{f_test:9} 所示。
 
-\begin{minipage}{\textwidth}
-  \begin{lstlisting}[caption=浦发银行 (600000) 格兰杰因果关系检验, label=f_test:8]
+\begin{figure}
+  \begin{minipage}{\textwidth}
+    \begin{lstlisting}[caption=浦发银行 (600000) 格兰杰因果关系检验, label=f_test:8]
 statsmodels.tsa.api.stattools.\
 grangercausalitytests(d, 5, verbose=True)
-  \end{lstlisting}
-\end{minipage}
+    \end{lstlisting}
+  \end{minipage}
+\end{figure}
 
-\begin{minipage}{\textwidth}
-  \begin{lstlisting}[caption=浦发银行 (600000) 检验结果, label=f_test:9]
+\begin{figure}
+  \begin{minipage}{\textwidth}
+    \begin{lstlisting}[caption=浦发银行 (600000) 检验结果, label=f_test:9]
 Granger Causality
 number of lags (no zero) 1
-ssr based F test:         F=11.2091 , p=0.0009  , df_denom=701, df_num=1
-ssr based chi2 test:   chi2=11.2571 , p=0.0008  , df=1
-likelihood ratio test: chi2=11.1680 , p=0.0008  , df=1
-parameter F test:         F=11.2091 , p=0.0009  , df_denom=701, df_num=1
+ssr based F test:         F=16.3569 , p=0.0001  , df_denom=701, df_num=1
+ssr based chi2 test:   chi2=16.4269 , p=0.0001  , df=1
+likelihood ratio test: chi2=16.2382 , p=0.0001  , df=1
+parameter F test:         F=16.3569 , p=0.0001  , df_denom=701, df_num=1
 
 
 Granger Causality
 number of lags (no zero) 2
-ssr based F test:         F=2.8522  , p=0.0584  , df_denom=698, df_num=2
-ssr based chi2 test:   chi2=5.7453  , p=0.0565  , df=2
-likelihood ratio test: chi2=5.7219  , p=0.0572  , df=2
-parameter F test:         F=2.8522  , p=0.0584  , df_denom=698, df_num=2
+ssr based F test:         F=3.9950  , p=0.0188  , df_denom=698, df_num=2
+ssr based chi2 test:   chi2=8.0472  , p=0.0179  , df=2
+likelihood ratio test: chi2=8.0015  , p=0.0183  , df=2
+parameter F test:         F=3.9950  , p=0.0188  , df_denom=698, df_num=2
 
 
 Granger Causality
 number of lags (no zero) 3
-ssr based F test:         F=2.1024  , p=0.0986  , df_denom=695, df_num=3
-ssr based chi2 test:   chi2=6.3709  , p=0.0949  , df=3
-likelihood ratio test: chi2=6.3421  , p=0.0961  , df=3
-parameter F test:         F=2.1024  , p=0.0986  , df_denom=695, df_num=3
+ssr based F test:         F=2.9458  , p=0.0322  , df_denom=695, df_num=3
+ssr based chi2 test:   chi2=8.9265  , p=0.0303  , df=3
+likelihood ratio test: chi2=8.8702  , p=0.0311  , df=3
+parameter F test:         F=2.9458  , p=0.0322  , df_denom=695, df_num=3
 
 
 Granger Causality
 number of lags (no zero) 4
-ssr based F test:         F=1.3906  , p=0.2355  , df_denom=692, df_num=4
-ssr based chi2 test:   chi2=5.6347  , p=0.2281  , df=4
-likelihood ratio test: chi2=5.6122  , p=0.2300  , df=4
-parameter F test:         F=1.3906  , p=0.2355  , df_denom=692, df_num=4
+ssr based F test:         F=2.3264  , p=0.0550  , df_denom=692, df_num=4
+ssr based chi2 test:   chi2=9.4267  , p=0.0513  , df=4
+likelihood ratio test: chi2=9.3638  , p=0.0526  , df=4
+parameter F test:         F=2.3264  , p=0.0550  , df_denom=692, df_num=4
 
 
 Granger Causality
 number of lags (no zero) 5
-ssr based F test:         F=1.2365  , p=0.2902  , df_denom=689, df_num=5
-ssr based chi2 test:   chi2=6.2814  , p=0.2798  , df=5
-likelihood ratio test: chi2=6.2534  , p=0.2823  , df=5
-parameter F test:         F=1.2365  , p=0.2902  , df_denom=689, df_num=5
-  \end{lstlisting}
-\end{minipage}
+ssr based F test:         F=2.1061  , p=0.0629  , df_denom=689, df_num=5
+ssr based chi2 test:   chi2=10.6987 , p=0.0577  , df=5
+likelihood ratio test: chi2=10.6178 , p=0.0595  , df=5
+parameter F test:         F=2.1061  , p=0.0629  , df_denom=689, df_num=5
+    \end{lstlisting}
+  \end{minipage}
+\end{figure}
 
-分析格兰杰因果关系检验中假设检验的结果，其中 $p$ 值随落后期的变化如图 \ref{f_test:11} 所示。理所应当地，随着落后期的增加，成交量自己包含的信息越来越多，所需要的由点击量的信息越来越少， $p$ 值单调递增。如果选择显著性水平 $\alpha=0.05$ ，则在落后期为 $2$ 的时候就已经可以接受零假设 $H_{0}$ ，认为讨论帖点击量对于成交量没有格兰杰因果关系。
+分析格兰杰因果关系检验中假设检验的结果，其中 $p$ 值随落后期的变化如表 \ref{f_test:10} 和图 \ref{f_test:11} 所示。理所应当地，随着落后期的增加，成交量自己携带的信息量越来越大，对于点击量信息量的依赖越来越小， $p$ 值单调递增。但是这并不是绝对的规律，因为成交量和点击量都会携带越来越多的信息，要根据最佳落后期实际情况变化来分析 $p$ 值的变化。如果选择显著性水平 $\alpha=0.05$ ，则在落后期为之前已经选择的最佳落后期 $3$ 的时候就已经可以拒绝零假设 $H_{0}$ ，认为讨论帖点击量对于成交量有格兰杰因果关系。
+
+\begin{table}
+  \centering
+  \caption{浦发银行 (600000) 格兰杰因果关系检验 $p$ 值}
+  \label{f_test:10}
+  \begin{tabular}{rrrrr}
+    \toprule
+    落后期 & SSR $\chi^{2}$ test & Params $F$ test & LR $\chi^{2}$ test & SSR $F$ test \\
+    \midrule
+    1 & 0.0001 & 0.0001 & 0.0001 & 0.0001 \\
+    2 & 0.0188 & 0.0179 & 0.0183 & 0.0188 \\
+    3 & 0.0322 & 0.0303 & 0.0311 & 0.0322 \\
+    4 & 0.0550 & 0.0513 & 0.0526 & 0.0550 \\
+    5 & 0.0629 & 0.0577 & 0.0595 & 0.0629 \\
+    \bottomrule
+  \end{tabular}
+\end{table}
 
 \begin{figure}
   \centering
-  \includegraphics[width=\textwidth]{plots/granger_causality_test_1.png}
+  \includegraphics[width=0.8\textwidth]{plots/granger_causality_test_1.png}
   \caption{浦发银行 (600000) 格兰杰因果关系检验 $p$ 值}
-  \label{f_test:10}
+  \label{f_test:11}
 \end{figure}
 
-;; sliding window trick
+不妨对于上证 50 所有股票进行格兰杰因果关系检验。使用同样的方法计算 50 支股票的四种检验下的 $p$ 值。结果如下所示。
+
+\begin{enumerate}
+  \item 似然比检验结果如图 \ref{f_test:12} 所示
+  \item 参数 $F$ 检验结果如图 \ref{f_test:13} 所示
+  \item 残差平方和 $\chi^{2}$ 检验结果如图 \ref{f_test:14} 所示
+  \item 残差平方和 $F$ 检验结果如图 \ref{f_test:15} 所示
+\end{enumerate}
+
+可以发现有如下几条规律。首先对于某一特定股票而言，四种检验方法的差别并不是很大，从对于零假设 $H_{0}$ 的验证的角度来说是没有区别的。从一个角度上增加了结果的可信度。其次不妨取显著性水平 $\alpha=0.05$ ，在这种情况下，大部分股票都能得出拒绝零假设的结论。 50 支股票中只有 9 支股票是认为讨论帖点击量对于成交量是没有格兰杰因果关系的，其他 41 支股票都是有关系的。从理论上证明了这种格兰杰因果关系的普遍性。关于这 9 支股票的特殊情况，可能有以下几种可能。
+
+\begin{enumerate}
+  \item 该股票本身存在异常情况，不符合普遍规律，例如受到庄家操控等人为因素影响
+  \item 该股票讨论区存在比较极端的讨论帖，干扰统一分析格兰杰因果关系
+\end{enumerate}
+
+对于第二种情况，在格兰杰因果关系中某些数据点出现的异常值能很敏感地影响假设检验的结果。例如有些之前的讨论帖被频繁顶至首页，导致总点击量很高。但是这些点击量并不如在数据框架中所假设的是短时间内产生的，而是长时间的积累，但这些点击量都被计入讨论帖发帖日期的点击量上。这样的数据点即使只有两三个，也会对检验结果造成比较深刻的影响。为解决这些问题，数据的预处理显得尤为关键如何辨别并且抹平这些极端数据点，但是又不忽视正常情况下出现的极大极小值，是非常细节并且值得深入探讨的。
+
+\begin{figure}
+  \centering
+  \includegraphics[width=0.9\textwidth]{plots/granger_causality_test_on_sse_50_lrtest.png}
+  \caption{上证 50 似然比检验}
+  \label{f_test:12}
+\end{figure}
+
+\begin{figure}
+  \centering
+  \includegraphics[width=0.9\textwidth]{plots/granger_causality_test_on_sse_50_params_ftest.png}
+  \caption{上证 50 参数 $F$ 检验}
+  \label{f_test:13}
+\end{figure}
+
+\begin{figure}
+  \centering
+  \includegraphics[width=0.9\textwidth]{plots/granger_causality_test_on_sse_50_ssr_chi2test.png}
+  \caption{上证 50 残差平方和 $\chi^{2}$ 检验}
+  \label{f_test:14}
+\end{figure}
+
+\begin{figure}
+  \centering
+  \includegraphics[width=0.9\textwidth]{plots/granger_causality_test_on_sse_50_ssr_ftest.png}
+  \caption{上证 50 残差平方和 $F$ 检验}
+  \label{f_test:15}
+\end{figure}
+
+需要注意的是，在格兰杰因果检验的过程中，落后期的选择十分重要。对于同一支股票，落后期的不同会导致假设检验得到的 $p$ 值产生很大的不同。可以理解的是落后期的不同使得讨论帖点击量带来的影响的作用产生极大的分歧。所以选择对的落后期是格兰杰因果关系检验的关键。
+
+而且之所以如此关注落后期的选择，因为一个足够精简的模型是十分必要的。选择过大的落后期会导致模型模拟和，对于后续的预测和分析是十分不利地。
+
+\section{异常分析}
+
+不妨单独观察 $p$ 值最高的股票中国石化 (600028) 。其落后期的选择如表 \ref{granger_causality_test_on_sse_50_abnormal:0} 所示。显而易见的是四种落后期选择的指标产生了极大的分歧，预示着此数据带来的不对称性使得落后期的选择不稳定。
+
+\begin{table}
+  \centering
+  \caption{中国石化 (600028) 落后期选择}
+  \label{granger_causality_test_on_sse_50_abnormal:0}
+  \begin{tabularx}{0.75\textwidth}{XXXXX}
+    \toprule
+    & AIC & BIC & FPE & HQIC \\
+    \midrule
+      0 & 61.60 & 61.61 & 5.661e+26 & 61.61 \\
+      1 & 59.68 & 59.72 & 8.286e+25 & 59.69 \\
+      2 & 59.60 & 59.67* & 7.654e+25 & 59.63 \\
+      3 & 59.59 & 59.68 & 7.542e+25 & 59.62 \\
+      4 & 59.59 & 59.71 & 7.566e+25 & 59.63 \\
+      5 & 59.59 & 59.73 & 7.561e+25 & 59.64 \\
+      6 & 59.56 & 59.73 & 7.322e+25 & 59.62 \\
+      7 & 59.55 & 59.74 & 7.250e+25 & 59.62 \\
+      8 & 59.48 & 59.70 & 6.774e+25 & 59.56* \\
+      9 & 59.48 & 59.73 & 6.764e+25 & 59.57 \\
+      10 & 59.48 & 59.76 & 6.801e+25 & 59.59 \\
+      11 & 59.48 & 59.79 & 6.822e+25 & 59.60 \\
+      12 & 59.49 & 59.82 & 6.829e+25 & 59.61 \\
+      13 & 59.49 & 59.85 & 6.890e+25 & 59.63 \\
+      14 & 59.49 & 59.87 & 6.838e+25 & 59.64 \\
+      15 & 59.49 & 59.90 & 6.839e+25 & 59.65 \\
+      16 & 59.49 & 59.92 & 6.839e+25 & 59.66 \\
+      17 & 59.49 & 59.95 & 6.849e+25 & 59.67 \\
+      18 & 59.44 & 59.92 & 6.495e+25 & 59.62 \\
+      19 & 59.43* & 59.94 & 6.440e+25* & 59.63 \\
+      20 & 59.43 & 59.97 & 6.457e+25 & 59.64 \\
+    \bottomrule
+  \end{tabularx}
+\end{table}
+
+得到其格兰杰因果关系检验的 $p$ 值随落后期变化，如图 \ref{granger_causality_test_on_sse_50_abnormal:1} 所示。可以看出其 $p$ 值一直都在 $0.2$ 以上，对于这种极端情况，无论选择什么样的落后期都无法验证其格兰杰因果关系。
+
+\begin{figure}
+  \centering
+  \includegraphics[width=0.9\textwidth]{plots/granger_causality_test_on_sse_50_abnormal_granger.png}
+  \caption{中国石化 (600028) 格兰杰因果关系检验 $p$ 值}
+  \label{granger_causality_test_on_sse_50_abnormal:1}
+\end{figure}
+
+继续深究原因，得到其成交量与讨论帖点击量折线图如图 \ref{granger_causality_test_on_sse_50_abnormal:2} 所示。比较明显的是在 2013 年 8 月左右的时间点，有一次点击量的突然增加，但是并没有对应成交量的大幅度变化。根据之前的分析，有可能是确实讨论区产生了如此异常的反应，也有可能是讨论帖归类的原因导致了过去的老贴被过多累加点击量。至此，可以发现该股票产生异常高的 $p$ 值的直接原因。其他几支 $p$ 值异常的股票也有各自不同的原因，深层次可能有更加统一地解释。但是对于绝大多数股票来说，都是符合格兰杰因果关系检验的结果的，不妨更多关注于普遍情况，利用其格兰杰因果关系。
+
+\begin{figure}
+  \centering
+  \includegraphics[width=0.9\textwidth]{plots/granger_causality_test_on_sse_50_abnormal_plot.png}
+  \caption{中国石化 (600028) 成交量与讨论帖点击量}
+  \label{granger_causality_test_on_sse_50_abnormal:2}
+\end{figure}
 
 ;; prediction model
+
+;; sliding window trick
 
 ;; result
 
