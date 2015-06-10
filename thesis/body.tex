@@ -145,7 +145,7 @@ Bayesian information criterion 的定义如下。
 
 \begin{equation}
   \label{bic:1}
-  \hat{L}=p(x|\hat{\theta},M).
+  \hat{L}=p(x\mid \hat{\theta},M).
 \end{equation}
 
 在式 \ref{bic:0} 中， $n$ 为数据点的个数， $k$ 为自由变量的个数。
@@ -158,7 +158,7 @@ Bayesian information criterion 的定义如下。
 
 \begin{figure}
   \centering
-  \includegraphics[width=\textwidth]{plots/auto_regression_0.png}
+  \includegraphics[width=0.9\textwidth]{plots/auto_regression_0.png}
   \caption{浦发银行 (600000) 成交量}
   \label{auto_regression:0}
 \end{figure}
@@ -481,12 +481,48 @@ parameter F test:         F=2.1061  , p=0.0629  , df_denom=689, df_num=5
   \label{granger_causality_test_on_sse_50_abnormal:2}
 \end{figure}
 
-;; prediction model
+\section{预测模型}
+
+试图利用向量自回归模型做最简单的预测模型。首先给出向量自回归模型的严格构造。它描述了在同一样本期间内的 $n$ 个内生变量可以作为它们过去值的线性函数。可以写成如式 \ref{var:0} 所示。
+
+\begin{equation}
+  \label{var:0}
+  y_{t}=c+A_{1}y_{t-1}+A_{2}y_{t-2}+\cdots +A_{p}y_{t-p}+e_{t}.
+\end{equation}
+
+其中 $c$ 是 $n\times 1$ 的常数向量， $A_{i}$ 是 $n\times n$ 矩阵， $e_{t}$ 是 $n\times 1$ 的误差向量。误差项满足以下几条性质。
+
+\begin{enumerate}
+  \item $E(e_{t})=0$
+  \item $E(e_{t}e_{t}^{\prime})=\Omega$ （正定矩阵）
+  \item $E(e_{t}e_{t-k}^{\prime})=0$
+\end{enumerate}
+
+在自回归模型的参数 $A_{i}$ 都已知，并且没有外生变量的情况下，在最小误差平方和的意义下最好的线性预测函数是基于向量自回归模型本身的，进行提前 $1$ 步的预测，即在已有时间 $t$ 信息的基础上预测 $y_{t+1}$ ，如式 \ref{var:1} 所示。
+
+\begin{equation}
+  \label{var:1}
+  y_{t+1\mid t}=c+A_{1}y_{t}+A_{2}y_{t-1}+\cdots +A_{p}y_{t-p+1}.
+\end{equation}
+
+要预测更长的提前量，可以使用预测链式法则，如式 \ref{var:2} 所示。其中当 $j\leq 0$ 的时候 $y_{t+j\mid t}=y_{t+j}$ 。
+
+\begin{equation}
+  \label{var:2}
+  y_{t+h\mid t}=c+A_{1}y_{t+h-1\mid t}+A_{2}y_{t+h-2\mid t}+\cdots +A_{p}y_{t-p+h\mid t}.
+\end{equation}
 
 ;; sliding window trick
 
 ;; result
 
+;; non-linear models possible
+
 ; model construction
 
 ; model testing
+% Local Variables:
+% fill-column: 80
+% eval: (flycheck-mode -1)
+% eval: (auto-fill-mode 1)
+% End:
