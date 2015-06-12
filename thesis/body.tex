@@ -136,9 +136,11 @@ Demo here
 
 Bayesian information criterion 的定义如下。
 
+;; error!!!!!??? copy from varModels.pdf p6
+
 \begin{equation}
   \label{bic:0}
-  \text{BIC}=-2\cdot \ln \hat{L}+k\cdot \ln n.
+  \operatorname{BIC}=-2\cdot \ln \hat{L}+k\cdot \ln n.
 \end{equation}
 
 在式 \ref{bic:0} 中， $\hat{L}$ 为模型 $M$ 似然性方程的最大值，如果令 $\hat{\theta}$ 为取得极大似然性的参数，则
@@ -154,11 +156,11 @@ Bayesian information criterion 的定义如下。
 
 \section{落后期计算}
 
-不妨尝试建立基于成交量和讨论贴点击量的向量自回归模型，本文使用了 Python 的数据挖掘框架 Statsmodels\cite{statsmodels} 。该框架对于成熟的线性和非线性数据模型都有准确高效的实现，并且自带简单的画图功能。取浦发银行 (600000) 在 2012 年 5 月 1 日至 2015 年 4 月 1  日之间的过往成交量和对应日期的讨论帖点击量，如图 \ref{auto_regression:0} 所示。
+不妨尝试建立基于成交量和讨论贴点击量的向量自回归模型，本文使用了 Python 的数据挖掘框架 Statsmodels\cite{statsmodels} 。该框架对于成熟的线性和非线性数据模型都有准确高效的实现，并且自带简单的画图功能。取浦发银行 (600000) 在 2012 年 5 月 1 日至 2015 年 4 月 1 日之间的过往成交量和对应日期的讨论帖点击量，如图 \ref{auto_regression:0} 所示。
 
 \begin{figure}
   \centering
-  \includegraphics[width=0.9\textwidth]{plots/auto_regression_0.png}
+  \includegraphics[width=0.9\textwidth]{plots/auto_regression_0.pdf}
   \caption{浦发银行 (600000) 成交量}
   \label{auto_regression:0}
 \end{figure}
@@ -261,7 +263,7 @@ model = statsmodels.tsa.api.VAR(data)
 
 \begin{equation}
   \label{f_test:3}
-  RSS_{0}=\sum_{i=1}^{m}\hat{e}_{t}^2.
+  \operatorname{RSS}_{0}=\sum_{i=1}^{m}\hat{e}_{t}^2.
 \end{equation}
 
 使用同样的方法，处理非约束方程如式 \ref{f_test:4} 所示，得到非约束方程的残差平方和如式 \ref{f_test:5} 。
@@ -273,14 +275,14 @@ model = statsmodels.tsa.api.VAR(data)
 
 \begin{equation}
   \label{f_test:5}
-  RSS_{1}=\sum_{i=1}^{m}\hat{u}_{t}^2.
+  \operatorname{RSS}_{1}=\sum_{i=1}^{m}\hat{u}_{t}^2.
 \end{equation}
 
 计算检验统计量如式 \ref{f_test:6} 。
 
 \begin{equation}
   \label{f_test:6}
-  S_{1}=\frac{(RSS_{0}-RSS_{1})/p}{RSS_{1}/(m-2p-1)}\sim F_{p,m-2p-1}.
+  S_{1}=\frac{(\operatorname{RSS}_{0}-\operatorname{RSS}_{1})/p}{\operatorname{RSS}_{1}/(m-2p-1)}\sim F_{p,m-2p-1}.
 \end{equation}
 
 如果 $S_{1}$ 大于指定的临界值，则拒绝原假设 $H_{0}$ 。
@@ -289,10 +291,10 @@ model = statsmodels.tsa.api.VAR(data)
 
 \begin{equation}
   \label{f_test:7}
-  S_{1}=\frac{m(RSS_{0}-RSS_{1})}{RSS_{1}}\sim \chi^{2}(p).
+  S_{1}=\frac{m(\operatorname{RSS}_{0}-\operatorname{RSS}_{1})}{\operatorname{RSS}_{1}}\sim \chi^{2}(p).
 \end{equation}
 
-\section{假设检验}
+\section{格兰杰因果关系假设检验}
 
 对浦发银行 (600000) 在 2012 年 5 月 1 日至 2015 年 4 月 1 日之间的成交量和对应日期的讨论帖点击量进行格兰杰因果关系检验。程序逻辑如代码 \ref{f_test:8} 所示。基于之前的结果，已经知道最佳落后期为 $3$ ，而在进行格兰杰因果关系检验的时候，需要输入一个最大落后期，然后程序会从 $1$ 到指定的最大落后期都计算统计检验量和对应的 $p$ 值。所以在程序代码中指定最大落后期为 $5$ 。得到输出如代码 \ref{f_test:9} 所示。
 
@@ -371,7 +373,7 @@ parameter F test:         F=2.1061  , p=0.0629  , df_denom=689, df_num=5
 
 \begin{figure}
   \centering
-  \includegraphics[width=0.8\textwidth]{plots/granger_causality_test_1.png}
+  \includegraphics[width=0.8\textwidth]{plots/granger_causality_test_1.pdf}
   \caption{浦发银行 (600000) 格兰杰因果关系检验 $p$ 值}
   \label{f_test:11}
 \end{figure}
@@ -396,28 +398,28 @@ parameter F test:         F=2.1061  , p=0.0629  , df_denom=689, df_num=5
 
 \begin{figure}
   \centering
-  \includegraphics[width=0.9\textwidth]{plots/granger_causality_test_on_sse_50_lrtest.png}
+  \includegraphics[width=0.9\textwidth]{plots/granger_causality_test_on_sse_50_lrtest.pdf}
   \caption{上证 50 似然比检验}
   \label{f_test:12}
 \end{figure}
 
 \begin{figure}
   \centering
-  \includegraphics[width=0.9\textwidth]{plots/granger_causality_test_on_sse_50_params_ftest.png}
+  \includegraphics[width=0.9\textwidth]{plots/granger_causality_test_on_sse_50_params_ftest.pdf}
   \caption{上证 50 参数 $F$ 检验}
   \label{f_test:13}
 \end{figure}
 
 \begin{figure}
   \centering
-  \includegraphics[width=0.9\textwidth]{plots/granger_causality_test_on_sse_50_ssr_chi2test.png}
+  \includegraphics[width=0.9\textwidth]{plots/granger_causality_test_on_sse_50_ssr_chi2test.pdf}
   \caption{上证 50 残差平方和 $\chi^{2}$ 检验}
   \label{f_test:14}
 \end{figure}
 
 \begin{figure}
   \centering
-  \includegraphics[width=0.9\textwidth]{plots/granger_causality_test_on_sse_50_ssr_ftest.png}
+  \includegraphics[width=0.9\textwidth]{plots/granger_causality_test_on_sse_50_ssr_ftest.pdf}
   \caption{上证 50 残差平方和 $F$ 检验}
   \label{f_test:15}
 \end{figure}
@@ -467,7 +469,7 @@ parameter F test:         F=2.1061  , p=0.0629  , df_denom=689, df_num=5
 
 \begin{figure}
   \centering
-  \includegraphics[width=0.9\textwidth]{plots/granger_causality_test_on_sse_50_abnormal_granger.png}
+  \includegraphics[width=0.9\textwidth]{plots/granger_causality_test_on_sse_50_abnormal_granger.pdf}
   \caption{中国石化 (600028) 格兰杰因果关系检验 $p$ 值}
   \label{granger_causality_test_on_sse_50_abnormal:1}
 \end{figure}
@@ -476,12 +478,12 @@ parameter F test:         F=2.1061  , p=0.0629  , df_denom=689, df_num=5
 
 \begin{figure}
   \centering
-  \includegraphics[width=0.9\textwidth]{plots/granger_causality_test_on_sse_50_abnormal_plot.png}
+  \includegraphics[width=0.9\textwidth]{plots/granger_causality_test_on_sse_50_abnormal_plot.pdf}
   \caption{中国石化 (600028) 成交量与讨论帖点击量}
   \label{granger_causality_test_on_sse_50_abnormal:2}
 \end{figure}
 
-\section{预测模型}
+\section{成交量趋势预测}
 
 试图利用向量自回归模型做最简单的预测模型。首先给出向量自回归模型的严格构造。它描述了在同一样本期间内的 $n$ 个内生变量可以作为它们过去值的线性函数。可以写成如式 \ref{var:0} 所示。
 
@@ -505,12 +507,168 @@ parameter F test:         F=2.1061  , p=0.0629  , df_denom=689, df_num=5
   y_{t+1\mid t}=c+A_{1}y_{t}+A_{2}y_{t-1}+\cdots +A_{p}y_{t-p+1}.
 \end{equation}
 
-要预测更长的提前量，可以使用预测链式法则，如式 \ref{var:2} 所示。其中当 $j\leq 0$ 的时候 $y_{t+j\mid t}=y_{t+j}$ 。
+要预测更长的提前量，可以使用预测链式法则，如式 \ref{var:2} 所示。
 
 \begin{equation}
   \label{var:2}
   y_{t+h\mid t}=c+A_{1}y_{t+h-1\mid t}+A_{2}y_{t+h-2\mid t}+\cdots +A_{p}y_{t-p+h\mid t}.
 \end{equation}
+
+其中当 $j\leq 0$ 的时候 $y_{t+j\mid t}=y_{t+j}$ 。
+
+为了获得自回归模型的系数，首先需要把数据整理成 pandas 支持的数据帧。然后选择落后期，并且根据落后期计算优化得到向量自回归模型。最后使用该模型来进行预测。
+
+在预测的过程中，主要有两方面需要特别注意。
+
+\begin{enumerate}
+  \item 预测步长的选择
+  \item 时间序列的预处理
+\end{enumerate}
+
+预测步长的选择意味着每经过多少次预测就要重新计算模型。从理论上来说似乎是每预测一次都新建一个模型比较好，包含的信息更多，但在实际应用场景下，并不是如此。另外时间序列的预处理也是十分重要的。不难看出股票成交量的变化并不是在任何时间都保持同样的期望的。这些因素都有可能影响最后模型的产生。
+
+需要注意的是，在对已有数据进行回测的时候，切忌使用所有数据算出模型，再用同样的数据计算。这样不符合实际情况下的因果关系，也不利于评价模型的泛化能力。一定要使用交叉验证的办法，才能评价模型在实际场景中的可用性。
+
+不妨使用招商银行 (600036) 作为测试数据，试图构建预测模型。其成交量与讨论帖点击量的历史关系如图 \ref{forecast:0} 所示。先通过向量自回归模型得到系数，逻辑如代码 \ref{forecast:1} 所示。
+
+\begin{figure}
+  \centering
+  \includegraphics[width=0.9\textwidth]{plots/var_forecast_history_line.pdf}
+  \caption{招商银行 (600036) 成交量与讨论帖点击量}
+  \label{forecast:0}
+\end{figure}
+
+\begin{figure}
+  \begin{minipage}{\textwidth}
+    \begin{lstlisting}[caption=向量自回归模型系数计算, label=forecast:1]
+data = pandas.DataFrame({
+    'volume': volume,
+    'clickCount': click_count
+})
+data.index = pandas.DatetimeIndex(date)
+model = statsmodels.tsa.api.VAR(data)
+results = model.fit(ic='hqic')
+    \end{lstlisting}
+  \end{minipage}
+\end{figure}
+
+落后期的选择使用了 HQIC 方法。得到结果如表 \ref{forecast:2} 和表 \ref{forecast:3} 所示。表 \ref{forecast:2} 展示的是关于成交量的回归模型的系数。对称地表 \ref{forecast:3} 展示的是关于讨论帖点击量的回归模型的系数。
+
+\begin{table}
+  \centering
+  \caption{招商银行 (600036) 成交量回归系数}
+  \label{forecast:2}
+  \begin{tabular}{lrrrr}
+    \toprule
+    & coefficient & std. error & t-stat & prob \\
+    \midrule
+    const & 6673808.985347 & 2839014.831623 & 2.351 & 0.019 \\
+    L1.clickCount & 44.314506 & 40.706032 & 1.089 & 0.277 \\
+    L1.volume & 0.459554 & 0.039591 & 11.607 & 0.000 \\
+    L2.clickCount & -164.745012 & 46.790235 & -3.521 & 0.000 \\
+    L2.volume & 0.220279 & 0.043528 & 5.061 & 0.000 \\
+    L3.clickCount & 15.514133 & 47.333759 & 0.328 & 0.743 \\
+    L3.volume & 0.141555 & 0.044510 & 3.180 & 0.002 \\
+    L4.clickCount & 31.436235 & 47.375577 & 0.664 & 0.507 \\
+    L4.volume & 0.039574 & 0.044540 & 0.889 & 0.375 \\
+    L5.clickCount & 191.049542 & 47.130236 & 4.054 & 0.000 \\
+    L5.volume & -0.033348 & 0.044100 & -0.756 & 0.450 \\
+    L6.clickCount & -163.072352 & 41.064196 & -3.971 & 0.000 \\
+    L6.volume & 0.137050 & 0.040193 & 3.410 & 0.001 \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\begin{table}
+  \centering
+  \caption{招商银行 (600036) 讨论帖点击量回归系数}
+  \label{forecast:3}
+  \begin{tabular}{lrrrr}
+    \toprule
+    & coefficient & std. error & t-stat & prob \\
+    \midrule
+    const & 10449.057853 & 2781.641575 & 3.756 & 0.000 \\
+    L1.clickCount & 0.577187 & 0.039883 & 14.472 & 0.000 \\
+    L1.volume & -0.000036 & 0.000039 & -0.925 & 0.356 \\
+    L2.clickCount & -0.127870 & 0.045845 & -2.789 & 0.005 \\
+    L2.volume & 0.000205 & 0.000043 & 4.807 & 0.000 \\
+    L3.clickCount & 0.078802 & 0.046377 & 1.699 & 0.090 \\
+    L3.volume & 0.000038 & 0.000044 & 0.868 & 0.385 \\
+    L4.clickCount & 0.054840 & 0.046418 & 1.181 & 0.238 \\
+    L4.volume & 0.000002 & 0.000044 & 0.040 & 0.968 \\
+    L5.clickCount & 0.067477 & 0.046178 & 1.461 & 0.144 \\
+    L5.volume & -0.000032 & 0.000043 & -0.729 & 0.466 \\
+    L6.clickCount & -0.071944 & 0.040234 & -1.788 & 0.074 \\
+    L6.volume & -0.000012 & 0.000039 & -0.314 & 0.754 \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+由于成交量的预测更加关键，暂时只关注成交量的回归系数。以 $y_{t}$ 代表 $t$ 时刻的成交量数据，以 $x_{t}$ 代表 $t$ 时刻的讨论帖点击量。可以得到由招商银行 (600036) 在 2012 年 5 月 1 日至 2015 年 4 月 1 日之间的数据产生的预测模型。该模型如式 \ref{forecast:4} 所示。可以看出 $t$ 时刻成交量的预测对于 $t$ 时刻的讨论帖点击量是没有依赖的，这是正确的行为，只能依赖过去几天的讨论帖点击量。
+
+观察式 \ref{forecast:4} 系数绝对值的大小，可以看出过往时间讨论帖点击量对应的系数都较大，这是因为成交量一般都在 $10^{8}$ 量级，而讨论帖点击量一般在 $10^{5}$ 量级，所以讨论帖点击量对应项的系数会更大。但是这带来一个问题，在不同时期成交量和讨论帖点击量的绝对值变化是非常大的，有宏观上的涨跌趋势。当在不同时期成交量和讨论帖点击量的量级比例发生变化时，回归系数并不能应对这个变化带来的影响。因此后续需要平衡不同时期的整体趋势，以使得不同时期的数据可以放在一条时间序列里回归分析。
+
+\begin{equation}
+  \label{forecast:4}
+  \begin{split}
+    y_{t}&=6673808.875347 \\
+    &+0.459554y_{t-1} \\
+    &+0.220279y_{t-2} \\
+    &+0.141555y_{t-3} \\
+    &+0.039574y_{t-4} \\
+    &-0.033348y_{t-5} \\
+    &+0.137050y_{t-6} \\
+    &+44.314506x_{t-1} \\
+    &-164.745012x_{t-2} \\
+    &+15.514133x_{t-3} \\
+    &+31.436235x_{t-4} \\
+    &+191.049542x_{t-5} \\
+    &-163.072352x_{t-6}.
+  \end{split}
+\end{equation}
+
+正如之前提到，式 \ref{forecast:4} 是不能够用于回测的，因为它包含了整条时间序列的信息。为了检验向量自回归模型是否适用，需要在仅提供 $t$ 时刻之前的信息的情况下，得到向量自回归模型，然后预测下一个时间点的成交量。由于并没有设置常数参数，可以认为该模型并没有针对特定股票优化，也不会出现过拟合，甚至无法交叉验证的情况。
+
+如图 \ref{forecast:5} 所示，是对招商银行 (600036) 历史成交量的回测。其中虚线为预测值，实线为历史真实值。可以看出大部分波动都被一定程度上预测。 2015 年 1 月左右的剧烈波动则稍有延迟。
+
+\begin{figure}
+  \centering
+  \includegraphics[width=0.9\textwidth]{plots/var_forecast_regression_line.pdf}
+  \caption{招商银行 (600036) 成交量预测}
+  \label{forecast:5}
+\end{figure}
+
+可以计算预测的均方根误差。均方根误差的定义如式 \ref{forecast:6} 所示。其中 $\hat{y}_{i}$ 为预测值，而 $y_{i}$ 为实际值。
+
+\begin{equation}
+  \label{forecast:6}
+  \operatorname{RMSE}=\sqrt{\frac{\sum_{i=1}^{n}(\hat{y}_{i}-y_{i})^{2}}{n}}.
+\end{equation}
+
+为了平衡不同模型之间的数值差异，可以使用标准均方根误差，如式 \ref{forecast:7} 所示。
+
+\begin{equation}
+  \label{forecast:7}
+  \operatorname{NRMSE}=\frac{\operatorname{RMSE}}{y_{max}-y_{min}}.
+\end{equation}
+
+计算图 \ref{forecast:5} 对应的预测的标准均方根误差，得到结果为 $5.857\times 10^{-2}$ 。即从某种意义的平均误差的角度来说，只有 $5\%$ 左右。
+
+之前进行预测计算的时候步长选取为 $1$ ，即每次建立模型只进行之后 $1$ 天的预测。为了减少计算复杂性，可以试图增长预测计算的步长。如果取步长为 $n$ ，则 $t$ 时刻的预测值 $\hat{y}_{t}$ 由式 \ref{forecast:8} 中时刻对应项组合得到。
+
+\begin{equation}
+  \label{forecast:8}
+  \left (\left \lfloor \frac{t}{n}\right \rfloor -1\right )n,\cdots,\left \lfloor \frac{t}{n}\right \rfloor n-1.
+\end{equation}
+
+不妨取步长 $n=5$ ，得到结果如图 \ref{forecast:9} 所示。可以看出虽然步长是之前的 $5$ 倍，但是精度并没有很严重的损失。计算得到其标准均方根误差为 $6.634\times 10^{-2}$ ，是步长为 $1$ 对应标准均方根误差的 $1.133$ 倍。
+
+\begin{figure}
+  \centering
+  \includegraphics[width=0.9\textwidth]{plots/var_forecast_regression_line_5_step.pdf}
+  \caption{招商银行 (600036) 步长 $5$ 成交量预测}
+  \label{forecast:9}
+\end{figure}
 
 ;; sliding window trick
 
@@ -518,9 +676,6 @@ parameter F test:         F=2.1061  , p=0.0629  , df_denom=689, df_num=5
 
 ;; non-linear models possible
 
-; model construction
-
-; model testing
 % Local Variables:
 % fill-column: 80
 % eval: (flycheck-mode -1)

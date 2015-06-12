@@ -1,6 +1,7 @@
 #!/usr/bin/env python3.4
 import sys
 import io
+import math
 import stats.data
 import stats.plot
 import datetime
@@ -11,10 +12,13 @@ import statsmodels.tsa.api
 import statsmodels.tsa.stattools
 import numpy as np
 
+all_plots = []
+
 def register_plot(func):
     def ret(*args, **kwargs):
         kwargs['func_name'] = func.__name__
         return func(*args, **kwargs)
+    all_plots.append(ret)
     return ret
 
 class Capturing(list):
@@ -47,8 +51,7 @@ def auto_regression_0(func_name):
     ax0.grid()
     ax0.legend(lines, labels, loc=0)
     plt.tight_layout()
-    # plt.show()
-    plt.savefig('thesis/plots/{}.png'.format(func_name))
+    plt.savefig('thesis/plots/{}.pdf'.format(func_name))
 
 @register_plot
 def auto_regression_1(func_name):
@@ -98,7 +101,7 @@ def granger_causality_test_1(func_name):
     ax.grid()
     ax.legend(loc=0)
     plt.tight_layout()
-    plt.savefig('thesis/plots/{}.png'.format(func_name))
+    plt.savefig('thesis/plots/{}.pdf'.format(func_name))
 
 @register_plot
 def granger_causality_test_on_sse_50(func_name):
@@ -134,8 +137,7 @@ def granger_causality_test_on_sse_50(func_name):
         plt.xlabel('stock')
         plt.ylabel('$p$ value')
         plt.legend(loc=0)
-        # plt.show()
-        plt.savefig('thesis/plots/{}_{}.png'.format(func_name, tests[i][0]))
+        plt.savefig('thesis/plots/{}_{}.pdf'.format(func_name, tests[i][0]))
         plt.clf()
 
 @register_plot
@@ -178,8 +180,7 @@ def granger_causality_test_on_sse_50_abnormal_granger(func_name):
     ax.grid()
     ax.legend(loc=0)
     plt.tight_layout()
-    plt.savefig('thesis/plots/{}.png'.format(func_name))
-    # plt.show()
+    plt.savefig('thesis/plots/{}.pdf'.format(func_name))
 
 @register_plot
 def granger_causality_test_on_sse_50_abnormal_plot(func_name):
@@ -201,9 +202,116 @@ def granger_causality_test_on_sse_50_abnormal_plot(func_name):
     ax0.grid()
     ax0.legend(lines, labels, loc=0)
     plt.tight_layout()
-    # plt.show()
-    plt.savefig('thesis/plots/{}.png'.format(func_name))
+    plt.savefig('thesis/plots/{}.pdf'.format(func_name))
 
+@register_plot
+def var_forecast_history_line(func_name):
+    fig, ax0 = plt.subplots()
+    ax1 = ax0.twinx()
+    lines = []
+    d = stats.data.get_merged_old('600036', 'date', 'volume', 'readCount')
+    dates = [datetime.datetime.strptime(i, '%Y-%m-%d') for i in d[:, 0]]
+    volume = d[:, 1]
+    click_count = d[:, 2]
+    ax0.fmt_xdata = matplotlib.dates.DateFormatter('%Y-%m-%d')
+    fig.autofmt_xdate()
+    lines += ax0.plot(dates, volume, 'k-', label='Volume')
+    ax0.set_xlabel('Date')
+    ax0.set_ylabel('Volume')
+    lines += ax1.plot(dates, click_count, 'k:', label='Click count')
+    ax1.set_ylabel('Click count')
+    labels = [i.get_label() for i in lines]
+    ax0.grid()
+    ax0.legend(lines, labels, loc=0)
+    plt.tight_layout()
+    plt.savefig('thesis/plots/{}.pdf'.format(func_name))
+
+@register_plot
+def var_forecast(func_name):
+    d = stats.data.get_merged_old(600036, 'date', 'volume', 'readCount')
+    volume = d[:, 1].astype(float)
+    click_count = d[:, 2].astype(float)
+    data = pandas.DataFrame({
+        'volume': volume,
+        'clickCount': click_count
+    })
+    data.index = pandas.DatetimeIndex(d[:, 0].astype(str))
+    model = statsmodels.tsa.api.VAR(data)
+    results = model.fit(ic='hqic')
+    print(results.summary())
+
+@register_plot
+def var_forecast_regression_line(func_name):
+    d = stats.data.get_merged_old(600036, 'date', 'volume', 'readCount')
+    volume = d[:, 1].astype(float)
+    click_count = d[:, 2].astype(float)
+    dates = [datetime.datetime.strptime(i, '%Y-%m-%d') for i in d[:, 0]]
+    data = pandas.DataFrame({
+        'volume': volume,
+        'clickCount': click_count
+    })
+    data.index = pandas.DatetimeIndex(d[:, 0].astype(str))
+    model = statsmodels.tsa.api.VAR(data)
+    lag = model.select_order(verbose=False)['hqic']
+    length = data.values.shape[0]
+    results = model.fit(ic='hqic')
+    prediction = [0] * (lag)
+    for j in range(lag, length):
+        prediction.append(results.forecast(data.values[j - lag: j], 1)[0][1])
+    cnt = 0
+    for j in range(lag, length):
+        diff = prediction[j] - volume[j]
+        cnt += diff ** 2
+    print(math.sqrt(cnt / (length - lag)) / (max(volume) - min(volume)))
+    fig, ax = plt.subplots()
+    ax.fmt_xdata = matplotlib.dates.DateFormatter('%Y-%m-%d')
+    fig.autofmt_xdate()
+    ax.plot(dates, volume, 'k-', label='Real')
+    ax.plot(dates, prediction, 'k--', label='Prediction')
+    ax.set_ylabel('Volume')
+    ax.set_xlabel('Date')
+    ax.grid()
+    ax.legend(loc=0)
+    plt.tight_layout()
+    plt.savefig('thesis/plots/{}.pdf'.format(func_name))
+
+@register_plot
+def var_forecast_regression_line_5_step(func_name):
+    d = stats.data.get_merged_old(600036, 'date', 'volume', 'readCount')
+    volume = d[:, 1].astype(float)
+    click_count = d[:, 2].astype(float)
+    dates = [datetime.datetime.strptime(i, '%Y-%m-%d') for i in d[:, 0]]
+    data = pandas.DataFrame({
+        'volume': volume,
+        'clickCount': click_count
+    })
+    data.index = pandas.DatetimeIndex(d[:, 0].astype(str))
+    model = statsmodels.tsa.api.VAR(data)
+    lag = model.select_order(verbose=False)['hqic']
+    length = data.values.shape[0]
+    results = model.fit(ic='hqic')
+    prediction = [0] * (lag)
+    for j in range(lag, length, 5):
+        prediction.extend(
+            map(lambda x: x[1],
+                results.forecast(data.values[j - lag: j], 5)))
+    prediction = prediction[:length]
+    cnt = 0
+    for j in range(lag, length):
+        diff = prediction[j] - volume[j]
+        cnt += diff ** 2
+    print(math.sqrt(cnt / (length - lag)) / (max(volume) - min(volume)))
+    fig, ax = plt.subplots()
+    ax.fmt_xdata = matplotlib.dates.DateFormatter('%Y-%m-%d')
+    fig.autofmt_xdate()
+    ax.plot(dates, volume, 'k-', label='Real')
+    ax.plot(dates, prediction, 'k--', label='Prediction')
+    ax.set_ylabel('Volume')
+    ax.set_xlabel('Date')
+    ax.grid()
+    ax.legend(loc=0)
+    plt.tight_layout()
+    plt.savefig('thesis/plots/{}.pdf'.format(func_name))
 
 if __name__ == '__main__':
     # auto_regression_0()
@@ -212,4 +320,5 @@ if __name__ == '__main__':
     # granger_causality_test_on_sse_50()
     # granger_causality_test_on_sse_50_abnormal_lag_selection()
     # granger_causality_test_on_sse_50_abnormal_granger()
-    granger_causality_test_on_sse_50_abnormal_plot()
+    # granger_causality_test_on_sse_50_abnormal_plot()
+    all_plots[-1]()
