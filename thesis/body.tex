@@ -12,7 +12,7 @@
 
 和经典的完全理性模型相不同，许多新的行为模型试图合理解释发生的这些剧烈波动。 De Long 等人形式化描述了非完全理性（噪声）交易者在市场中扮演的角色。在他们的模型中，有两类投资者：理性套利者和噪声交易者。理性套利者对资产的未来回报持有理性分析，而噪声交易者受外在情感驱动，产生相对于理性分析要么过于乐观要么过于悲观的期待。最终平衡的市场价格反应理性套利者和噪声交易者双方的期待。本质上， De Long 等人证明了市场价格因为不理性的乐观情绪或者悲观情绪会偏离价值，证明了噪声交易者在交易中起到的作用。
 
-在 De Long 等人的工作之后，又有大量的经验文献试图研究投资者情绪及其产生的效果之间的关系。一般人们更多研究情绪直接或者间接的影响。 Lee， Schleifer 和 Thaler 采用基于市场的简介的方式，他们使用了 CEFD 作为投资者情绪的指标，指出 CEFD 是个人情绪积极或者消极和普遍市场情绪的关系。
+在 De Long 等人的工作之后，又有大量的经验文献试图研究投资者情绪及其产生的效果之间的关系。一般人们更多研究情绪直接或者间接的影响。 Lee， Sceifer 和 Thaler 采用基于市场的简介的方式，他们使用了 CEFD 作为投资者情绪的指标，指出 CEFD 是个人情绪积极或者消极和普遍市场情绪的关系。
 
 \section{本文研究内容}
 
@@ -31,6 +31,8 @@
 根据网站活跃度和垃圾信息比例等因素，考虑到大型门户网站在用户交流上有一定的局限性，而太小型的论坛又缺乏信息流通度和有效性，最终选取访问量、人均页面浏览量都很大的股吧，综合考虑选取东方财富网股吧作为主要信息来源。股吧在财经版块设置了新闻、研报和公告等多个版块，针对热门主题和热门个股都有专门的讨论版，信息量充分全面，而且有很好的已经分好类的模块，从各方面都满足本文的需求。
 
 本文另从国信证券金太阳网上交易客户端获取股票市场的交易数据，主要包括个股的开盘价、收盘价、最高价、最低价、成交量以及成交额等。
+
+； 为什么只用收盘价？
 
 为了排除掉小众个股非统计性的波动因素，以及可能的人为操控因素，选定上证50成分股作为主要研究对象。上证50成分股有充分的股民和资金来源，能够排除个别资本控盘的非有效市场情况出现。上证50成分股又能从一定程度上反映大盘情况，有重要的研究价值和意义。
 
@@ -77,7 +79,7 @@ Demo here
 
 ; extract final usable data, read count and volume
 
-\chapter{成交量与情绪的关系}
+\chapter{成交量与讨论帖点击量的关系}
 
 \section{格兰杰因果关系}
 
@@ -161,7 +163,7 @@ Bayesian information criterion 的定义如下。
 \begin{figure}
   \centering
   \includegraphics[width=0.9\textwidth]{plots/auto_regression_0.pdf}
-  \caption{浦发银行 (600000) 成交量}
+  \caption{浦发银行 (600000) 成交量与讨论帖点击量关系}
   \label{auto_regression:0}
 \end{figure}
 
@@ -670,11 +672,460 @@ results = model.fit(ic='hqic')
   \label{forecast:9}
 \end{figure}
 
-;; sliding window trick
+\section{滑动窗口量比}
 
-;; result
+之前面对的一个主要问题是成交量在时间上的期望并不是不变的。例如在招商银行 (600036) 的成交量上，如图 \ref{forecast:0} 所示， 2015 年 1 月以后的成交量是之前的数倍。而且不同时间之间成交量波动剧烈。这样进行线性回归分析的时候，必定导致各时间段的权重不一致，更加偏向于成交量更高的部分。然而对于股市来说，成交量的高低携带同等重要的信息，为了消除这种不平等，可以引入量比的概念，通过滑动窗口并且在滑动窗口内进行量比的计算，可以把所有数据归一化到统一的尺度上。
 
-;; non-linear models possible
+滑动窗口量比的具体操作步骤如下。
+
+\begin{enumerate}
+  \item 选取窗口大小为 $w$
+  \item 选取需要计算的时刻 $t$
+  \item 取 $[t-w+1,t]$ 时间区间内的最小值，即
+    \[
+      m=\min_{\forall i\in [t-w+1,t]}\left(y_{i}\right)
+    \]
+  \item 取 $y_{t}$ 与 $m$ 的比值，即
+    \[
+      \hat{y}_{t}=\frac{y_{t}}{m}
+    \]
+\end{enumerate}
+
+不妨以窗口大小 $w=7$ 为例，对招商银行 (600036) 做滑动窗口量比之后得到如图 \ref{sliding_window:0} 所示的结果。
+
+\begin{figure}
+  \centering
+  \includegraphics[width=0.9\textwidth]{plots/sliding_ratio_line.pdf}
+  \caption{招商银行 (600036) 滑动窗口大小 $5$ 量比}
+  \label{sliding_window:0}
+\end{figure}
+
+由于是和最小值的比值，所有的量比之后的值满足 $y_{i}\geq 1$ ，但是少数点任然出现比值等于 $0$ 的情况，这是由于最小值中出现 $0$ ，除法得到 NaN 的原因。这和某些数据点不存在有关，并不会对结果造成影响。
+
+如果对量比计算之后的结果进行预测分析，使用之前的方法，将数据源替换为量比计算之后的数据，可以得到结果如图 \ref{sliding_window:1} 所示。
+
+\begin{figure}
+  \centering
+  \includegraphics[width=0.9\textwidth]{plots/sliding_ratio_forecast.pdf}
+  \caption{招商银行 (600036) 滑动窗口大小 $5$ 预测结果}
+  \label{sliding_window:1}
+\end{figure}
+
+计算得到标准均方根误差为 $1.045\times 10^{-1}$ 。由于最大最小值横跨的区间明显比之前的结果要小，所以直接比较标准均方根误差是没有意义的。但是不难看出，此时的模型对于拐点的把握和反应都相比之前好了很多。很明显这是由于预处理之后的数据在不同时期的绝对值范围区间相似。之所以这样的原因，可以认为股市变动主要由两大方面因素相互作用。
+
+\begin{figure}[H]
+  \begin{minipage}{\textwidth}
+    \begin{enumerate}
+      \item 宏观经济形势
+      \item 股民心理
+    \end{enumerate}
+  \end{minipage}
+\end{figure}
+
+宏观经济形势主要体现在大盘走势上，如果经济形势比较好，大盘走势就会上涨，相应股票可能短期内有波动，但是总体趋势上往上涨的。但是股民心理波动相对频繁，会在短期的市场变化上产生明显的影响，这种心理波动虽然受到大盘走势的影响，但更多是一种独立的因素。表现在短期内股价的频繁波动。从一定程度上可以用均线来分析模拟宏观经济形势。所以使用量比计算相对削弱了宏观经济形势对成交量的影响，反而关注股民心理部分。
+
+尝试不同的滑动窗口大小，在此不再展示单独的结果。对于上证 50 里的所有股票，在滑动窗口为 $w\in [2, 10]$ 的范围内分别得到标准均方根误差，以此来显示不同滑动窗口大小之间的关系，也显示不同股票之间对于滑动窗口量比有不同反应的差异。
+
+例如对于招商银行 (600036) ，结果如表 \ref{sliding_window:2} 所示。滑动窗口大小对于结果标准均方根误差的影响并不是单调的。在实际使用的时候可以根据个股不同选取最佳的窗口大小，以获得最好的效果。
+
+\begin{table}
+  \centering
+  \caption{招商银行 (600036) 不同滑动窗口大小对比}
+  \label{sliding_window:2}
+  \begin{tabular}{rr}
+    \toprule
+    窗口大小 & 标准均方根误差 \\
+    \midrule
+    2 & 0.09899992956586048 \\
+    3 & 0.10308134849238397 \\
+    4 & 0.09082552122214050 \\
+    5 & 0.09635710957749012 \\
+    6 & 0.10324352591264475 \\
+    7 & 0.10453272329607123 \\
+    8 & 0.09928063376309698 \\
+    9 & 0.10280568105864621 \\
+    10 & 0.10639861314404000 \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+对于上证 50 所有股票，其最佳窗口大小的选取和对应的标准误差均方根如表 \ref{sliding_window:3} 所示。
+
+\begin{center}
+  \begin{longtable}{rrr}
+    \caption{招商银行 (600036) 不同滑动窗口大小对比}
+    \label{sliding_window:3} \\
+    \toprule
+    股票代码 & 最佳窗口大小 & 标准误差均方根 \\
+    \midrule
+    \endfirsthead
+    \multicolumn{3}{c}{续表} \\
+    \toprule
+    股票代码 & 最佳窗口大小 & 标准误差均方根 \\
+    \hline
+    \endhead
+    \hline
+    \multicolumn{3}{r}{续下页}
+    \endfoot
+    \endlastfoot
+    600000 & 4 & 0.06507378279547231 \\
+    600010 & 3 & 0.046787640382425631 \\
+    600015 & 8 & 0.08102542723555374 \\
+    600016 & 10 & 0.083725100995798496 \\
+    600018 & 9 & 0.021331092998438765 \\
+    600028 & 10 & 0.065520033284345899 \\
+    600030 & 3 & 0.04676993370312172 \\
+    600036 & 4 & 0.090825521222140507 \\
+    600048 & 3 & 0.092944567536801775 \\
+    600050 & 2 & 0.075557010306984654 \\
+    600089 & 9 & 0.056564360423647861 \\
+    600104 & 4 & 0.071729737949525488 \\
+    600109 & 9 & 0.049883031237732363 \\
+    600111 & 3 & 0.076252016540148862 \\
+    600150 & 6 & 0.066390846190124822 \\
+    600196 & 2 & 0.079346865488974724 \\
+    600256 & 4 & 0.078877440949510047 \\
+    600332 & 2 & 0.043799048623684056 \\
+    600372 & 8 & 0.050747852952962171 \\
+    600406 & 4 & 0.086307070150588028 \\
+    600518 & 7 & 0.037577657365749979 \\
+    600519 & 8 & 0.064246325320964734 \\
+    600585 & 5 & 0.077798367779057992 \\
+    600637 & 3 & 0.04154556056467603 \\
+    600690 & 4 & 0.068584442960259284 \\
+    600703 & 2 & 0.079706103509941728 \\
+    600832 & 7 & 0.039982071870845022 \\
+    600837 & 3 & 0.051166167363317992 \\
+    600887 & 7 & 0.033803112756368082 \\
+    600999 & 2 & 0.068583930621682124 \\
+    601006 & 3 & 0.06280839910132438 \\
+    601088 & 2 & 0.062492194672069429 \\
+    601118 & 10 & 0.056133427558822405 \\
+    601166 & 5 & 0.087799296273357794 \\
+    601169 & 10 & 0.058330683650961855 \\
+    601288 & 2 & 0.058701752262776942 \\
+    601299 & 7 & 0.02265766121005593 \\
+    601318 & 3 & 0.090806705123322756 \\
+    601328 & 8 & 0.048585173177144163 \\
+    601398 & 3 & 0.06260252509397557 \\
+    601601 & 4 & 0.063536597449525986 \\
+    601628 & 3 & 0.057380354111528677 \\
+    601668 & 2 & 0.086962000811413601 \\
+    601688 & 7 & 0.037033208067903868 \\
+    601766 & 9 & 0.027915740616423042 \\
+    601818 & 4 & 0.049852371490162604 \\
+    601857 & 10 & 0.064288946183429771 \\
+    601901 & 9 & 0.068175951565399767 \\
+    601989 & 5 & 0.0048737705383712707 \\
+    601998 & 4 & 0.04780899852798054 \\
+    \bottomrule
+  \end{longtable}
+\end{center}
+
+如果将最佳窗口大小以柱状图的形式表示出来，可以得到图 \ref{sliding_window:4} 。与图 \ref{f_test:12} 、图 \ref{f_test:13} 、图 \ref{f_test:14} 和图 \ref{f_test:15} 对比可以看出，最佳窗口大小比较大的几只股票，意味着他们在预测的意义上结果并不稳定，对应的也正好是在格兰杰因果关系检验时因果关系不明显的几只。建立两种计算之间的联系，可以作为指标发现跟大盘整体形势和股民心理耦合度比较低的几只股票，再单独分析。
+
+\begin{figure}
+  \centering
+  \includegraphics[width=0.9\textwidth]{plots/sliding_ratio_window_selection.pdf}
+  \caption{上证 50 最佳窗口大小}
+  \label{sliding_window:4}
+\end{figure}
+
+在所有的计算中，均使用的线性模型。使用线性模型的好处有结构简单，关系明显，易于分析验证。因为参数个数比较少，可以通过枚举的方法得到不同系数之间的联系，并且尝试获得更好的结果。但是在时间序列上，或许非线性模型可能可以带来更好的性能。首先注意到不同时间对于当前的影响不应该是线性的关系，更多是类似指数衰弱的关系。而成交量和讨论帖点击量也不仅仅是线性组合的关系。最后还有其他的信息来源，比如讨论帖发帖量，或者相关的信息可以引入进来。如果考虑非线性模型，则模型的选择十分重要。因为选择空间太大，不太可能一一枚举。
+
+\chapter{价格与讨论帖情绪的关系}
+
+\section{与讨论帖点击量格兰杰因果关系检验}
+
+在已经得到讨论帖点击量与成交量的格兰杰因果关系并且结果较为理想的情况下，考虑讨论帖点击量与价格的格兰杰因果关系。再以浦发银行 (600000) 为例，其股票价格和讨论帖点击量的关系如图 \ref{price_click_count:0} 所示。可以看出，与讨论帖点击量与成交量的关系图 \ref{auto_regression:0} 对比，股票价格与讨论帖点击量并没有很强的直观上的关系。考虑到向量自回归模型中由众多项的线性组合得到，虽然并不能以直观上的关系作为最终评判的标准，但是至少可以发现结果不会比之前更好。
+
+\begin{figure}
+  \centering
+  \includegraphics[width=0.9\textwidth]{plots/price_click_count_line.pdf}
+  \caption{浦发银行 (600000) 价格与讨论帖点击量关系}
+  \label{price_click_count:0}
+\end{figure}
+
+利用之前进行格兰杰因果关系检验的思路和推导出来的方法，先选择最佳落后期，得到结果如表 \ref{price_click_count:1} 所示。使用 HQIC 方法选取的落后期 $3$ ，进行格兰杰因果关系，得到结果如代码 \ref{price_click_count:2} 所示。分析可知，在最佳落后期 $3$ 的情况下， $p$ 值均已大于 $0.7$ ，并不能显著地表明有格兰杰因果关系。而且在其他落后期的选择上， $p$ 值都相对较高，可以断言在此情况下，讨论帖点击量并没有给收盘价格带来更多的附加信息，无法推导出它们之间的格兰杰因果关系。
+
+从直观上进行分析，可以看出在 2015 年 1 月以后，收盘价格呈现大幅度上涨趋势，这时却没有看到讨论帖点击量成比例的反应。对比 2013 年 9 月附近的大涨，当时的讨论帖点击量就有很明显的成比例的大幅增长。然后在 2014 年 5 月附近讨论帖点击量出现一个高峰，而收盘价格并没有相应的动作。所以不难从直观上也发现它们之间的因果关系较弱。
+
+\begin{table}
+  \centering
+  \caption{浦发银行 (600000) 价格与讨论帖点击量落后期选择}
+  \label{price_click_count:1}
+  \begin{tabularx}{0.75\textwidth}{XXXXX}
+    \toprule
+    & AIC & BIC & FPE & HQIC \\
+    \midrule
+    0 & 26.30 & 26.32 & 2.647e+11 & 26.31 \\
+    1 & 20.95 & 20.99 & 1.257e+09 & 20.97 \\
+    2 & 20.88 & 20.95* & 1.171e+09 & 20.91 \\
+    3 & 20.86* & 20.96 & 1.152e+09* & 20.90* \\
+    4 & 20.87 & 20.98 & 1.153e+09 & 20.91 \\
+    5 & 20.87 & 21.01 & 1.155e+09 & 20.92 \\
+    6 & 20.87 & 21.04 & 1.159e+09 & 20.94 \\
+    7 & 20.87 & 21.07 & 1.162e+09 & 20.95 \\
+    8 & 20.88 & 21.10 & 1.164e+09 & 20.96 \\
+    9 & 20.89 & 21.14 & 1.177e+09 & 20.98 \\
+    10 & 20.88 & 21.16 & 1.172e+09 & 20.99 \\
+    11 & 20.88 & 21.19 & 1.174e+09 & 21.00 \\
+    12 & 20.89 & 21.22 & 1.186e+09 & 21.02 \\
+    13 & 20.90 & 21.26 & 1.193e+09 & 21.04 \\
+    14 & 20.91 & 21.29 & 1.204e+09 & 21.06 \\
+    15 & 20.92 & 21.33 & 1.214e+09 & 21.08 \\
+    16 & 20.93 & 21.36 & 1.227e+09 & 21.10 \\
+    17 & 20.93 & 21.39 & 1.230e+09 & 21.11 \\
+    18 & 20.94 & 21.43 & 1.238e+09 & 21.13 \\
+    19 & 20.95 & 21.46 & 1.249e+09 & 21.15 \\
+    20 & 20.95 & 21.49 & 1.257e+09 & 21.16 \\
+    \bottomrule
+  \end{tabularx}
+\end{table}
+
+\begin{figure}
+  \begin{minipage}{\textwidth}
+    \begin{lstlisting}[caption=浦发银行 (600000) 价格与讨论帖点击量检验结果, label=price_click_count:2]
+Granger Causality
+number of lags (no zero) 1
+ssr based F test:         F=1.1545  , p=0.2830  , df_denom=701, df_num=1
+ssr based chi2 test:   chi2=1.1594  , p=0.2816  , df=1
+likelihood ratio test: chi2=1.1585  , p=0.2818  , df=1
+parameter F test:         F=1.1545  , p=0.2830  , df_denom=701, df_num=1
+
+
+Granger Causality
+number of lags (no zero) 2
+ssr based F test:         F=0.5832  , p=0.5584  , df_denom=698, df_num=2
+ssr based chi2 test:   chi2=1.1748  , p=0.5558  , df=2
+likelihood ratio test: chi2=1.1738  , p=0.5561  , df=2
+parameter F test:         F=0.5832  , p=0.5584  , df_denom=698, df_num=2
+
+
+Granger Causality
+number of lags (no zero) 3
+ssr based F test:         F=0.4344  , p=0.7284  , df_denom=695, df_num=3
+ssr based chi2 test:   chi2=1.3165  , p=0.7252  , df=3
+likelihood ratio test: chi2=1.3152  , p=0.7255  , df=3
+parameter F test:         F=0.4344  , p=0.7284  , df_denom=695, df_num=3
+
+
+Granger Causality
+number of lags (no zero) 4
+ssr based F test:         F=1.0045  , p=0.4044  , df_denom=692, df_num=4
+ssr based chi2 test:   chi2=4.0703  , p=0.3966  , df=4
+likelihood ratio test: chi2=4.0585  , p=0.3981  , df=4
+parameter F test:         F=1.0045  , p=0.4044  , df_denom=692, df_num=4
+
+
+Granger Causality
+number of lags (no zero) 5
+ssr based F test:         F=0.8507  , p=0.5140  , df_denom=689, df_num=5
+ssr based chi2 test:   chi2=4.3215  , p=0.5041  , df=5
+likelihood ratio test: chi2=4.3082  , p=0.5059  , df=5
+parameter F test:         F=0.8507  , p=0.5140  , df_denom=689, df_num=5
+    \end{lstlisting}
+  \end{minipage}
+\end{figure}
+
+接着考虑所有上证 50 股票，对其进行格兰杰因果关系检验。得到如下结果。
+
+\begin{enumerate}
+  \item 似然比检验结果如图 \ref{price_click_count:3} 所示
+  \item 参数 $F$ 检验结果如图 \ref{price_click_count:4} 所示
+  \item 残差平方和 $\chi^{2}$ 检验结果如图 \ref{price_click_count:5} 所示
+  \item 残差平方和 $F$ 检验结果如图 \ref{price_click_count:6} 所示
+\end{enumerate}
+
+\begin{figure}
+  \centering
+  \includegraphics[width=0.9\textwidth]{plots/price_click_count_granger_on_sse_50_lrtest.pdf}
+  \caption{上证 50 价格与讨论帖点击量似然比检验}
+  \label{price_click_count:3}
+\end{figure}
+
+\begin{figure}
+  \centering
+  \includegraphics[width=0.9\textwidth]{plots/price_click_count_granger_on_sse_50_params_ftest.pdf}
+  \caption{上证 50 价格与讨论帖点击量参数 $F$ 检验}
+  \label{price_click_count:4}
+\end{figure}
+
+\begin{figure}
+  \centering
+  \includegraphics[width=0.9\textwidth]{plots/price_click_count_granger_on_sse_50_ssr_chi2test.pdf}
+  \caption{上证 50 价格与讨论帖点击量残差平方和 $\chi^{2}$ 检验}
+  \label{price_click_count:5}
+\end{figure}
+
+\begin{figure}
+  \centering
+  \includegraphics[width=0.9\textwidth]{plots/price_click_count_granger_on_sse_50_ssr_ftest.pdf}
+  \caption{上证 50 价格与讨论帖点击量残差平方和 $F$ 检验}
+  \label{price_click_count:6}
+\end{figure}
+
+不难看出整体上格兰杰因果关系没有成交量与讨论帖点击量之间的强烈。在显著性水平 $\alpha=0.5$ 的情况下有 $20$ 支股票没有显示出很强的格兰杰因果关系。间接地来看，成交量与讨论帖点击量有着相对过强地格兰杰因果关系，但是成交量与价格之间并没有很明显的关系，也可以认为讨论帖点击量对收盘价格直接提供的信息不够充足。
+
+\section{情感分析}
+
+为了更好地得到讨论帖点击量和价格之间的关系，需要引入情绪分析。目前情绪分析可以在多个维度上进行，提取出不同的情感成分并且给出相应的评分。例如比较经典的做法是分成冷静、警觉、肯定、重要、善良和高兴这几个类别。分别分析讨论帖内容中的这几个感情成分的评分，再利用线性或者非线性模型得到与价格的关系。
+
+为了简单起见，本文中只对情感做一个维度的评分，即评判是积极还是消极情感。所有具体分类的情感都可以归纳为积极和消极两大类，所以如此近似并不会导致某种情感信息的完全丢失，只是使得不同细分情感无法区分。
+
+在分析情感的时候，对于标题、正文和回复可以有不同的处理方法。本文将标题和正文连接在一起进行情感分析。考虑到回复中平均蕴含的信息量比较小，暂时不把回复包括到情感分析里面。但是为了更加全面地考虑这个问题，可以尝试对回复进行情感分析。
+
+首先把每日的讨论帖归类，逐条进行情感分析，得到在区间 $[0,1]$ 之内的情感极性评分。对情感极性评分进行二值化，以 $0.5$ 作为分界线，高于 $0.5$ 认为是积极情感，低于 $0.5$ 则认为是消极情感，最后对积极情感和消极情感分别计数累加，作为当天的积极情感和消极情感成分。
+
+分析每天的积极情感和消极情感的比例，可以近似得到当天有多少的讨论帖点击量是积极或者是消极的。按这种方法讨论帖点击量分成两组不同的数据。
+
+再以浦发银行 (600036) 为例，得到其价格与讨论帖点击量中的积极成分的关系如图 \ref{price_click_count:7} 所示。对比图 \ref{price_click_count:0} 所示的价格与讨论帖点击量所有成分总和的关系，可以发现提取积极情感成分后， 2013 年 9 月和 2015 年 1 月附近的快速上涨对应的讨论帖点击量结果更加明显，而相应的 2014 年 5 月附近之前虚高的讨论帖点击量，此处趋势被相对削弱。相比之前的分析，能更加清晰地体现出股民情感所造成的讨论帖点击量和股票收盘价格之间的关联性。
+
+\begin{figure}
+  \centering
+  \includegraphics[width=0.9\textwidth]{plots/price_click_count_positive_line.pdf}
+  \caption{浦发银行 (600000) 价格与积极讨论帖点击量关系}
+  \label{price_click_count:7}
+\end{figure}
+
+\section{格兰杰因果关系检验}
+
+基于以上情感分析的内容，再进行格兰杰因果关系检验。不同的是，将研究提取过后的讨论帖点击量中的积极情感成分与收盘价格之间的关系。检验方法相同。以 浦发银行 (600000) 为例，首先选择最佳落后期，结果如表 \ref{price_click_count:8} 所示。虽然最佳落后期还是 $3$ ，但是可以发现得到的值比之前的略小，说明模型更加精简，拟合程度更高。
+
+\begin{table}
+  \centering
+  \caption{浦发银行 (600000) 价格与积极讨论帖点击量落后期选择}
+  \label{price_click_count:8}
+  \begin{tabularx}{0.75\textwidth}{XXXXX}
+    \toprule
+    & AIC & BIC & FPE & HQIC \\
+    \midrule
+    0 & 23.97 & 23.99 & 2.582e+10 & 23.98 \\
+    1 & 18.57 & 18.61 & 1.157e+08 & 18.58 \\
+    2 & 18.52 & 18.58* & 1.102e+08 & 18.54 \\
+    3 & 18.50 & 18.59 & 1.083e+08 & 18.54* \\
+    4 & 18.50 & 18.62 & 1.082e+08 & 18.55 \\
+    5 & 18.50* & 18.64 & 1.080e+08* & 18.55 \\
+    6 & 18.50 & 18.67 & 1.084e+08 & 18.57 \\
+    7 & 18.50 & 18.70 & 1.086e+08 & 18.58 \\
+    8 & 18.51 & 18.73 & 1.088e+08 & 18.59 \\
+    9 & 18.52 & 18.77 & 1.100e+08 & 18.61 \\
+    10 & 18.51 & 18.79 & 1.095e+08 & 18.62 \\
+    11 & 18.51 & 18.82 & 1.098e+08 & 18.63 \\
+    12 & 18.52 & 18.85 & 1.108e+08 & 18.65 \\
+    13 & 18.53 & 18.89 & 1.114e+08 & 18.67 \\
+    14 & 18.54 & 18.92 & 1.127e+08 & 18.69 \\
+    15 & 18.55 & 18.96 & 1.134e+08 & 18.71 \\
+    16 & 18.56 & 18.99 & 1.147e+08 & 18.73 \\
+    17 & 18.56 & 19.02 & 1.149e+08 & 18.74 \\
+    18 & 18.57 & 19.06 & 1.159e+08 & 18.76 \\
+    19 & 18.58 & 19.09 & 1.169e+08 & 18.78 \\
+    20 & 18.59 & 19.13 & 1.179e+08 & 18.79 \\
+    \bottomrule
+  \end{tabularx}
+\end{table}
+
+使用最佳落后期进行格兰杰因果关系检验，得到结果如代码 \ref{price_click_count:9} 所示。在最佳落后期 $3$ 的情况下， $p$ 值由之前的平均 $0.7269$ 降到了平均 $0.5970$ ， 为之前的 $82\%$ 。虽然仍然不能表明有很明显的格兰杰因果关系，但在其他非最佳落后期的情况下， $p$ 值有更加明显的优化下降。
+
+\begin{figure}
+  \begin{minipage}{\textwidth}
+    \begin{lstlisting}[caption=浦发银行 (600000) 价格与积极讨论帖点击量检验结果, label=price_click_count:9]
+Granger Causality
+number of lags (no zero) 1
+ssr based F test:         F=1.2235  , p=0.2690  , df_denom=701, df_num=1
+ssr based chi2 test:   chi2=1.2288  , p=0.2676  , df=1
+likelihood ratio test: chi2=1.2277  , p=0.2679  , df=1
+parameter F test:         F=1.2235  , p=0.2690  , df_denom=701, df_num=1
+
+
+Granger Causality
+number of lags (no zero) 2
+ssr based F test:         F=0.6407  , p=0.5272  , df_denom=698, df_num=2
+ssr based chi2 test:   chi2=1.2906  , p=0.5245  , df=2
+likelihood ratio test: chi2=1.2894  , p=0.5248  , df=2
+parameter F test:         F=0.6407  , p=0.5272  , df_denom=698, df_num=2
+
+
+Granger Causality
+number of lags (no zero) 3
+ssr based F test:         F=0.6251  , p=0.5990  , df_denom=695, df_num=3
+ssr based chi2 test:   chi2=1.8941  , p=0.5947  , df=3
+likelihood ratio test: chi2=1.8915  , p=0.5952  , df=3
+parameter F test:         F=0.6251  , p=0.5990  , df_denom=695, df_num=3
+
+
+Granger Causality
+number of lags (no zero) 4
+ssr based F test:         F=1.7066  , p=0.1467  , df_denom=692, df_num=4
+ssr based chi2 test:   chi2=6.9150  , p=0.1404  , df=4
+likelihood ratio test: chi2=6.8812  , p=0.1423  , df=4
+parameter F test:         F=1.7066  , p=0.1467  , df_denom=692, df_num=4
+
+
+Granger Causality
+number of lags (no zero) 5
+ssr based F test:         F=1.3891  , p=0.2262  , df_denom=689, df_num=5
+ssr based chi2 test:   chi2=7.0564  , p=0.2165  , df=5
+likelihood ratio test: chi2=7.0211  , p=0.2191  , df=5
+parameter F test:         F=1.3891  , p=0.2262  , df_denom=689, df_num=5
+    \end{lstlisting}
+  \end{minipage}
+\end{figure}
+
+可以看出，将情感分析因素引入之后，可以获得和之前完全不同的信息量。
+
+这是符合直觉的结果。既然已知单纯的讨论帖点击量与成交量有很明显的相关关系，则可知要获得收盘价格的相关信息，必须依赖讨论帖点击量中更加细分之后的成分。而要获得此成分，进行一维地情感分析无疑是最简单的方法。无论是单独地使用讨论帖情感极性比例而不考虑讨论帖点击量总量，还是引入更多维度的情感信息，都只会使模型变得更加片面，而不能反映出最本质地股民情感因素。
+
+并且不难看出，股民情感因素对于价格的波动无疑起着举足轻重的作用。进一步验证了最初的猜想。
+
+再次对上证 50 所有股票进行格兰杰因果关系检验。得到结果如下。
+
+\begin{enumerate}
+  \item 似然比检验结果如图 \ref{price_click_count:10} 所示
+  \item 参数 $F$ 检验结果如图 \ref{price_click_count:11} 所示
+  \item 残差平方和 $\chi^{2}$ 检验结果如图 \ref{price_click_count:12} 所示
+  \item 残差平方和 $F$ 检验结果如图 \ref{price_click_count:13} 所示
+\end{enumerate}
+
+\begin{figure}
+  \centering
+  \includegraphics[width=0.9\textwidth]{plots/price_click_count_positive_granger_on_sse_50_lrtest.pdf}
+  \caption{上证 50 价格与积极讨论帖点击量似然比检验}
+  \label{price_click_count:10}
+\end{figure}
+
+\begin{figure}
+  \centering
+  \includegraphics[width=0.9\textwidth]{plots/price_click_count_positive_granger_on_sse_50_params_ftest.pdf}
+  \caption{上证 50 价格与积极讨论帖点击量参数 $F$ 检验}
+  \label{price_click_count:11}
+\end{figure}
+
+\begin{figure}
+  \centering
+  \includegraphics[width=0.9\textwidth]{plots/price_click_count_positive_granger_on_sse_50_ssr_chi2test.pdf}
+  \caption{上证 50 价格与积极讨论帖点击量残差平方和 $\chi^{2}$ 检验}
+  \label{price_click_count:12}
+\end{figure}
+
+\begin{figure}
+  \centering
+  \includegraphics[width=0.9\textwidth]{plots/price_click_count_positive_granger_on_sse_50_ssr_ftest.pdf}
+  \caption{上证 50 价格与积极讨论帖点击量残差平方和 $F$ 检验}
+  \label{price_click_count:13}
+\end{figure}
+
+在之前 $p$ 值比较大的地方，可以看出加入情感分析之后都有显著地效果。对于之前格兰杰因果关系就已经很敏感的部分，则效果不是那么明显。
+
+要想获得更加全方面的提升，需要更加细粒度的情感分析。比较好的做法是加入更多的维度的信息，分析更多不同的情感类型。或者可以引入非线性的方法。现在只是取积极情感在总讨论帖点击量中的比例，来获得积极讨论帖点击量的数量。可以考虑使用更加复杂的模型，使得得到的点击量的数量更加具有区分度。
+
+\chapter{总结}
+
+由成交量、价格分别和讨论帖点击量的格兰杰因果关系检验可以发现，绝大部分上证 50 成分股的成交量方面都显示强烈的格兰杰因果关系。可以认为是由股民的关注度很大程度上决定了股票的交易量，证实了股民情感在股票交易中起到的重要作用。
+
+而相应地价格与讨论帖点击量的因果关系则稍有不同，部分股票仍有较强的格兰杰因果关系，部分股票则相对较弱。为了进一步挖掘它们之间的联系，引入情感极性分析的办法，对于之前相关性较弱的股票取得了一定的进展。发现讨论帖点击量中有更加细分的组成部分，如果能单独分离这些部分，可以获得更加准确的与收盘价格之间的格兰杰因果关系。继续证实了股民情感在股票交易中的作用。
+
+本文还有很多不足，例如并没有对许多更高级的模型进行尝试。本文仅仅对最基本的线性模型进行分析，得到数值上有指示意义的结果，证实因果关系的确切存在。要使得关系更加明显，准确度更高，必须使用更加细致的分类方法和更高级的模型。
 
 % Local Variables:
 % fill-column: 80
