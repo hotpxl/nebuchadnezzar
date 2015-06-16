@@ -115,6 +115,8 @@ parseSinglePage = (symbol, page, redis) ->
 
 基于代码 \ref{data:2} ，实现百度翻译 API 的自动调用。比较需要注意的地方在于细节。首先原帖中可能有符号字符或者其他不可见字符，这些字符会干扰翻译引擎工作，必须通过正则表达式将其剔除。翻译引擎对于长度也有严格的限制，考虑一般不会有过长的讨论帖，此处强行限制在 2000 个字符，截断超出的部分。 \texttt{currentTranslator} 是由轮叫调度得到一个翻译接口。在实际使用中，为了并行使用多个翻译组建加快翻译进度，必须处理好多个翻译组建之间的调度问题。调用过快的话有被封禁的危险。所以本文单独实现一个基于滴漏桶的轮叫调度器，保证有限调度速度更快的翻译组建，同时保证调度的公平性，且以硬上限作为界限，进行指数后退防止接口被禁用。
 
+具体翻译组建的实现较为琐碎，不再赘述。需要注意的是，就算是百度翻译 API 本身也有多种接口，接口之间的数据格式和请求格式稍有不同，出错和重试的逻辑也相应有不同。
+
 \begin{figure}
   \begin{minipage}{\textwidth}
     \begin{lstlisting}[caption=百度翻译 API 调用, label=data:2]
@@ -312,7 +314,7 @@ plt.show()
 
 \begin{table}
   \centering
-  \caption{落后期选择}
+  \caption{浦发银行 (600000) 成交量与讨论帖点击量落后期选择}
   \label{auto_regression:1}
   \begin{tabularx}{0.75\textwidth}{XXXXX}
     \toprule
@@ -443,7 +445,7 @@ model = statsmodels.tsa.api.VAR(data)
 
 \begin{figure}
   \begin{minipage}{\textwidth}
-    \begin{lstlisting}[caption=浦发银行 (600000) 格兰杰因果关系检验, label=f_test:8]
+    \begin{lstlisting}[caption=浦发银行 (600000) 成交量与讨论帖点击量格兰杰因果关系检验, label=f_test:8]
 statsmodels.tsa.api.stattools.\
 grangercausalitytests(d, 5, verbose=True)
     \end{lstlisting}
@@ -452,7 +454,7 @@ grangercausalitytests(d, 5, verbose=True)
 
 \begin{figure}
   \begin{minipage}{\textwidth}
-    \begin{lstlisting}[caption=浦发银行 (600000) 检验结果, label=f_test:9]
+    \begin{lstlisting}[caption=浦发银行 (600000) 成交量与讨论帖点击量格兰杰因果关系检验结果, label=f_test:9]
 Granger Causality
 number of lags (no zero) 1
 ssr based F test:         F=16.3569 , p=0.0001  , df_denom=701, df_num=1
@@ -499,7 +501,7 @@ parameter F test:         F=2.1061  , p=0.0629  , df_denom=689, df_num=5
 
 \begin{table}
   \centering
-  \caption{浦发银行 (600000) 格兰杰因果关系检验 $p$ 值}
+  \caption{浦发银行 (600000) 成交量与讨论帖点击量格兰杰因果关系检验 $p$ 值}
   \label{f_test:10}
   \begin{tabular}{rrrrr}
     \toprule
@@ -517,7 +519,7 @@ parameter F test:         F=2.1061  , p=0.0629  , df_denom=689, df_num=5
 \begin{figure}
   \centering
   \includegraphics[width=0.8\textwidth]{plots/granger_causality_test_1.pdf}
-  \caption{浦发银行 (600000) 格兰杰因果关系检验 $p$ 值}
+  \caption{浦发银行 (600000) 成交量与讨论帖点击量格兰杰因果关系检验 $p$ 值}
   \label{f_test:11}
 \end{figure}
 
@@ -542,28 +544,28 @@ parameter F test:         F=2.1061  , p=0.0629  , df_denom=689, df_num=5
 \begin{figure}
   \centering
   \includegraphics[width=0.9\textwidth]{plots/granger_causality_test_on_sse_50_lrtest.pdf}
-  \caption{上证 50 似然比检验}
+  \caption{上证 50 成交量与讨论帖点击量似然比检验}
   \label{f_test:12}
 \end{figure}
 
 \begin{figure}
   \centering
   \includegraphics[width=0.9\textwidth]{plots/granger_causality_test_on_sse_50_params_ftest.pdf}
-  \caption{上证 50 参数 $F$ 检验}
+  \caption{上证 50 成交量与讨论帖点击量参数 $F$ 检验}
   \label{f_test:13}
 \end{figure}
 
 \begin{figure}
   \centering
   \includegraphics[width=0.9\textwidth]{plots/granger_causality_test_on_sse_50_ssr_chi2test.pdf}
-  \caption{上证 50 残差平方和 $\chi^{2}$ 检验}
+  \caption{上证 50 成交量与讨论帖点击量残差平方和 $\chi^{2}$ 检验}
   \label{f_test:14}
 \end{figure}
 
 \begin{figure}
   \centering
   \includegraphics[width=0.9\textwidth]{plots/granger_causality_test_on_sse_50_ssr_ftest.pdf}
-  \caption{上证 50 残差平方和 $F$ 检验}
+  \caption{上证 50 成交量与讨论帖点击量残差平方和 $F$ 检验}
   \label{f_test:15}
 \end{figure}
 
@@ -577,7 +579,7 @@ parameter F test:         F=2.1061  , p=0.0629  , df_denom=689, df_num=5
 
 \begin{table}
   \centering
-  \caption{中国石化 (600028) 落后期选择}
+  \caption{中国石化 (600028) 成交量与讨论帖点击量落后期选择}
   \label{granger_causality_test_on_sse_50_abnormal:0}
   \begin{tabularx}{0.75\textwidth}{XXXXX}
     \toprule
@@ -613,7 +615,7 @@ parameter F test:         F=2.1061  , p=0.0629  , df_denom=689, df_num=5
 \begin{figure}
   \centering
   \includegraphics[width=0.9\textwidth]{plots/granger_causality_test_on_sse_50_abnormal_granger.pdf}
-  \caption{中国石化 (600028) 格兰杰因果关系检验 $p$ 值}
+  \caption{中国石化 (600028) 成交量与讨论帖点击量格兰杰因果关系检验 $p$ 值}
   \label{granger_causality_test_on_sse_50_abnormal:1}
 \end{figure}
 
@@ -622,7 +624,7 @@ parameter F test:         F=2.1061  , p=0.0629  , df_denom=689, df_num=5
 \begin{figure}
   \centering
   \includegraphics[width=0.9\textwidth]{plots/granger_causality_test_on_sse_50_abnormal_plot.pdf}
-  \caption{中国石化 (600028) 成交量与讨论帖点击量}
+  \caption{中国石化 (600028) 成交量与讨论帖点击量关系}
   \label{granger_causality_test_on_sse_50_abnormal:2}
 \end{figure}
 
@@ -677,7 +679,7 @@ parameter F test:         F=2.1061  , p=0.0629  , df_denom=689, df_num=5
 \begin{figure}
   \centering
   \includegraphics[width=0.9\textwidth]{plots/var_forecast_history_line.pdf}
-  \caption{招商银行 (600036) 成交量与讨论帖点击量}
+  \caption{招商银行 (600036) 成交量与讨论帖点击量关系}
   \label{forecast:0}
 \end{figure}
 
@@ -809,7 +811,7 @@ results = model.fit(ic='hqic')
 \begin{figure}
   \centering
   \includegraphics[width=0.9\textwidth]{plots/var_forecast_regression_line_5_step.pdf}
-  \caption{招商银行 (600036) 步长 $5$ 成交量预测}
+  \caption{招商银行 (600036) 步长 $5$ 时成交量预测}
   \label{forecast:9}
 \end{figure}
 
@@ -837,7 +839,7 @@ results = model.fit(ic='hqic')
 \begin{figure}
   \centering
   \includegraphics[width=0.9\textwidth]{plots/sliding_ratio_line.pdf}
-  \caption{招商银行 (600036) 滑动窗口大小 $5$ 量比}
+  \caption{招商银行 (600036) 滑动窗口大小 $5$ 时量比}
   \label{sliding_window:0}
 \end{figure}
 
@@ -848,7 +850,7 @@ results = model.fit(ic='hqic')
 \begin{figure}
   \centering
   \includegraphics[width=0.9\textwidth]{plots/sliding_ratio_forecast.pdf}
-  \caption{招商银行 (600036) 滑动窗口大小 $5$ 预测结果}
+  \caption{招商银行 (600036) 滑动窗口大小 $5$ 时成交量预测结果}
   \label{sliding_window:1}
 \end{figure}
 
@@ -1112,7 +1114,26 @@ parameter F test:         F=0.8507  , p=0.5140  , df_denom=689, df_num=5
 
 为了更好地得到讨论帖点击量和价格之间的关系，需要引入情绪分析。目前情绪分析可以在多个维度上进行，提取出不同的情感成分并且给出相应的评分。例如比较经典的做法是分成冷静、警觉、肯定、重要、善良和高兴这几个类别。分别分析讨论帖内容中的这几个感情成分的评分，再利用线性或者非线性模型得到与价格的关系。
 
-为了简单起见，本文中只对情感做一个维度的评分，即评判是积极还是消极情感。所有具体分类的情感都可以归纳为积极和消极两大类，所以如此近似并不会导致某种情感信息的完全丢失，只是使得不同细分情感无法区分。
+为了简单起见，本文中只对情感做一个维度的评分，即评判是积极还是消极情感。所有具体分类的情感都可以归纳为积极和消极两大类，所以如此近似并不会导致某种情感信息的完全丢失，只是使得不同细分情感无法区分。逻辑如代码 \ref{sent:code:0} 所示。该部分代码可以使用进程级并行，由 Redis 数据库处理并行访问的一致性和性能问题，单个进程负责调用之前训练好的神经网络模型，即 \texttt{sentiment\_score} 函数，获取情感极性。
+
+\begin{figure}
+  \begin{minipage}{\textwidth}
+    \begin{lstlisting}[caption=情感分析逻辑, label=sent:code:0]
+def analysis_worker(i):
+    source_redis = redis.StrictRedis(db=1, password='***')
+    target_redis = redis.StrictRedis(db=2, password='***')
+    key = target_redis.rpop('tasks')
+    while key != None:
+        text = source_redis.get(key)
+        sent = sentiment_score(json.loads(text)['translation'])
+        target_redis.set(key, sent)
+        logger.info('{} remaining'.format(target_redis.llen('tasks')))
+        key = target_redis.rpop('tasks')
+    \end{lstlisting}
+  \end{minipage}
+\end{figure}
+
+至于翻译的部分已经在数据框架中提到，在此不再赘述。从数据框架的角度，还有从论坛数据中提取整合情感分析文本的部分，属于预处理中比较琐碎的部分，也不再赘述。
 
 在分析情感的时候，对于标题、正文和回复可以有不同的处理方法。本文将标题和正文连接在一起进行情感分析。考虑到回复中平均蕴含的信息量比较小，暂时不把回复包括到情感分析里面。但是为了更加全面地考虑这个问题，可以尝试对回复进行情感分析。
 
