@@ -1,0 +1,37 @@
+\chapter{外文资料的调研阅读报告或书面翻译}
+
+\noindent{}There has been a number of attempts to predict future stock price movements. The implication of the efficient market hypothesis (EMH), which was first introduced by Fama $^{[1]}$, was more or less accepted by all these approaches. The semi-strong form of EMH assumes all publicly available information is present in the prices of the market, and new information could be incorporated rapidly. So it is impossible to predict price fluctuation and do better than an ordinary buy-and-hold strategy.
+
+However there are new approaches that utilize investors' sentiment as an index of price fluctuation. Baker and Wurgler $^{[2]}$ states the importance of incorporating sentiment into models to predict future returns. They point out six different proxies to identify various investor sentiment, and show their effects on price fluctuation.
+
+In the mean time, the internet evolved into something O'Reilly $^{[3]}$ called Web 2.0. Users could freely share content through all kinds of services. They could share photos, files, blogs, or through online bulletin boards and social networks. Researchers then started to focus on anaylizing those user-generated content. There are attempts at monitoring the big crowds in online media (Pang and Lee $^{[4]}$). Others authors also tried to find the connection between mass opinion and prediction of stock prices.
+
+Wysocki $^{[5]}$ was the first on to systematically work on this problem. He captured data from Yahoo! message boards, and detected some positive correlations between firm characteristics and message board posts. Based on the result, he tried to predict future stock market activities. His prediction was confirmed over a large scale on overnight posting activities, but showed no result on daytime counterpart.
+
+However, on the other side, Dewally $^{[6]}$ found out that information on social media do not contain actual valuable information, because of its accuracy. In spite of this finding, the author proposed a trading strategy based on social media data. Dewally $^{[7]}$ also analyzed stock recommendation from online newsgroups in one of his earlier research paper. The finding spawns two different time periods, and found out that positive recommendations are often a result of strong stock performance happened before. It does not contain information that is predictive.
+
+Sentiment analysis from text sample is a very difficult task. One reason for this is that text is often ambiguous. It cannot be assigned a single meaning without considering the context. Not to mention there are cases that text is without any sentiment at all. As a result, text sentiment analysis often has a high error rate. To alleviate this problem, people often restrict the number of target classes. For text containing financial information, it is often categorized into either positive or negative, focusing on the ``buy'' or ``sell'' side sentiment polarity. As an addition, some researchers might include a third sentiment, a neutral one. All others are not considered. Pang and Lee $^{[4]}$ gave an review of sentiment analysis methods and some of the problems faced.
+
+Sentiment analysis on stock market is often carried out in two ways. The simple method is to count individual word occurences and use a naive Bayesian classifier. It is also called bag-of-words method. The other method involves part-of-speech tagging and recognition. It requires more complex language models to detect contextual information. Wilson et al. $^{[8]}$ extracted contextual polarity based on sentences. Das and Chen $^{[9]}$ use combination of different algorithms to classify bulletin board posts. It forms a knowledge-discovery architecture. In this context, adjectives and adverbs are tagged and analyzed. It assumes that in a sentence, adjectives and adverbs contain more information about the whole context, and hence higher significance in the classification process.
+
+Most recently, with the development in the area of neural network, sentiment analysis is also seeing a new opportunity. A simple neural network can often capture the structure and individual words simultaneously in a speech, and offering a much better solution compared to traditional methods.
+
+Also, there are attempts to include other mood dimensions. Based on the work of Wilson et al. $^{[8]}$, OpinionFinder (OF) provides indexing of various aspects of subjectivity within the speech. There is also another tool called Profile of Mood States (POMS), along with its derivative GPOMS. It has six classifiers: calm, alert, sure, vital, kind, and happy.
+
+I have so far covered various data sources and method to analyze those data sources. There are surely many more new methods and tools out there, with far exceeding better results. There are also different methods to identify the relationship between the interpreted data and stock market feed. A simple approach would be using time-lagged vector autoregressive models. Neural networks could also be utilized in the stage, providing non-lineariaty and much flexibility.
+
+The research are is still growing rapidly and a number of new unprecedented methods is emerging. Future research should not restrict themselves to the existing methods and models.
+
+\section*{References}
+
+\begin{enumerate}[{$[$}1{$]$}]
+  \item Fama Eugene F. Efficient Capital Markets: A Review Of Theory And Empirical Work. The Journal of Finance 25.2 (1970): 383.
+  \item Baker Malcolm P. and Wurgler Jeffrey A. Investor Sentiment And The Cross-Section Of Stock Returns. SSRN Journal. (2006)
+  \item O'Reilly Tim. What is Web 2.0. Design Patterns and Business Models for the Next Generation of Software. Communications \& Strategies 17.1.
+  \item Pang Bo and Lee Lillian. Opinion Mining and Sentiment Analysis. Foundations and Trends in Information Retrieval 2.1-2 (2008): 1-135
+  \item Wysocki Peter D. Cheap Talk on the Web: The Determinants of Postings on Stock Message Boards (November 1998). University of Michigan Business School Working Paper No. 98025.
+  \item Dewally Micha\"{e}l. The Informational Value of Earnings Whispers. American Jounal of Busisness 23.1 (2008): 37-52
+  \item Dewally Micha\"{e}l. Internet Investment Advice: Investing with a Rock of Salt. Financial Analysts Journal 59.4 (2003): 65-77
+  \item Wilson Theresa, Mooney Raymond J., Wiebe Janyce and Hoffmann Paul. Recognizing contextual polarity in phrase-level sentiment analysis. Human Language Technologies Conference (2005): 347-354
+  \item Das S. R., Chen M. Y. Yahoo! for Amazon: Sentiment extraction from small talk on the web. Management Science 53.9 (2007):1375-1388
+\end{enumerate}
