@@ -1,33 +1,15 @@
 \begin{cabstract}
-  股票市场是我国社会主义市场经济体制的不可或缺的组成部分。在我国国民生活中也发挥着重要的作用。而最近几年来，网络媒体成为股民公众关注的重点，蕴含大量对于股票市场研究有重要价值的信息。
+  本文通过公众关注度信息对股票市场进行分析预测。本文基于异步事件循环机制实现了公众关注度数据采集及预处理系统，并利用整合数据及相关数学模型搭建分析预测平台，分析东方财富网股吧讨论帖点击量与股票成交量和价格的关系。本文通过引入情感极性分析提取讨论帖点击量中的情感因素，进一步得到基于公众关注度的股票市场的预测模型。
 
-  本文基于公众关注度，通过分析股民情感极性，证实股民心理因素在股票市场中起到的关键作用，提出基于股民情感分析的股票市场预测模型。
-
-  本文工作主要分为以下几大模块。
-
-  \begin{enumerate}
-    \item 关于股民情感极性及公众关注度信息的统一数据采集模块
-    \item 关于股民情感极性的分析归类模块
-    \item 公众关注度信息在股票市场中的重要作用证实模块
-    \item 基于公众关注度模型的股票市场预测模块
-  \end{enumerate}
+  实验结果表明，公众关注度对股票市场成交量与价格有很强的格兰杰因果关系。并且结合情感信息，可以构建出相对精确的预测模型。
 \end{cabstract}
 
 \ckeywords{股票市场, 成交量, 价格, 预测, 公众关注度}
 
 \begin{eabstract}
-  Stock market is an indispensible part of China's socialist market economy. And it also plays an important part in people's lives. In recent years, online media has come into focus of ordinary market participants. This online world contains information that is crucially valuable to the research on stock market.
+  This paper utilizes public attention to analyze the stock market. Based on event driven architecture, this paper implements a data collection and preprocessing system. Aggregated data and relevant mathematical models are used to implement a prediction platform, and analyze the relationship between click count of Guba posts and the stock market. This paper also takes advantage of sentiment analysis tool to extract sentiment components from data, to construct a predction model for the stock market.
 
-  Here we will analyze sentiment positiveness of stock participants, based on public focus, and use it to prove the important part it plays in the stock market. Finally I will present a prediction model based on the result.
-
-  I intend it to be structured into following components.
-
-  \begin{enumerate}
-    \item Data collection on sentiments of stock market participants
-    \item Sentiment analysis and categorization
-    \item Proof of how sentiment severely affects the stock market
-    \item Prediction model based on the result
-  \end{enumerate}
+  As shown by the result, public attention holds a strong Granger causality towards trading volume and prices. Combined with sentimental data, a rather accurate prediction model could be constructed.
 \end{eabstract}
 
 \ekeywords{stock market, volume, price, prediction, public focus}

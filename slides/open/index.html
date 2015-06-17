@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="cn">
+
+	<head>
+		<meta charset="utf-8">
+
+		<title>基于公众关注度的股票市场的分析与预测开题报告</title>
+
+		<meta name="author" content="Yutian Li">
+
+		<meta name="apple-mobile-web-app-capable" content="yes" />
+		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+
+		<link rel="stylesheet" href="css/reveal.css">
+		<link rel="stylesheet" href="css/theme/league.css" id="theme">
+
+		<!-- Code syntax highlighting -->
+		<link rel="stylesheet" href="lib/css/zenburn.css">
+
+		<!-- Printing and PDF exports -->
+		<script>
+			var link = document.createElement( 'link' );
+			link.rel = 'stylesheet';
+			link.type = 'text/css';
+			link.href = window.location.search.match( /print-pdf/gi ) ? 'css/print/pdf.css' : 'css/print/paper.css';
+			document.getElementsByTagName( 'head' )[0].appendChild( link );
+		</script>
+
+		<!--[if lt IE 9]>
+		<script src="lib/js/html5shiv.js"></script>
+		<![endif]-->
+	</head>
+
+	<body>
+
+		<div class="reveal">
+
+			<!-- Any section element inside of this container is displayed as a slide -->
+			<div class="slides">
+				<section>
+					<h2>基于公众关注度的股票市场的分析与预测</h2>
+					<h3>开题报告</h3>
+					<p>
+						<small>指导老师：余宏亮</small>
+					</p>
+					<p>
+						<small>学生：李雨田</small>
+					</p>
+				</section>
+
+				<section>
+					<section>
+						<h2>选题依据</h2>
+						<p>
+							行为经济学指出情绪对于个人行为和决策决定有深刻的影响。
+						</p>
+						<p>
+							是否对于公众群体有类似的结论存在？是否和经济指标相关甚至构成因果关系？
+						</p>
+					</section>
+					<section>
+						<h2>研究现状</h2>
+						<p>
+							<em>Twitter mood predicts the stock market</em>
+						</p>
+					</section>
+					<section>
+						<h2>选题目的与意义</h2>
+						<ul>
+							<li class="fragment">股票市场是国民经济状况的晴雨表，截止至2011年末，我国成为仅次于美国的第二大股票市场</li>
+							<li class="fragment">在市场经济不断发展的过程中，金融市场活动日益复杂，过度反应与反应不足、羊群效应等异象不断产生</li>
+							<li class="fragment">互联网成为了股票市场信息传播的主要渠道</li>
+							<li class="fragment">理解公众情绪与股票市场动态之间的关系</li>
+							<li class="fragment">通过公众情绪预测股票市场的动态</li>
+						</ul>
+					</section>
+				</section>
+
+				<section>
+					<h2>进度安排</h2>
+					<ul>
+						<li>收集资料，阅读相关文献</li>
+						<li>分析数据，验证相关性及因果关系</li>
+						<li>建立预测模型</li>
+					</ul>
+				</section>
+
+				<section>
+					<h2>可能存在的困难</h2>
+					<ul>
+						<li class="fragment">国内股票市场的特殊性</li>
+						<li class="fragment">中文关注度，甚至是情感指数的量化</li>
+						<li class="fragment">股票市场信号和拐点的判断</li>
+						<li class="fragment">预测模型的局限性分析</li>
+						<li class="fragment">预测模型的技术细节</li>
+					</ul>
+				</section>
+
+			</div>
+
+		</div>
+
+		<script src="lib/js/head.min.js"></script>
+		<script src="js/reveal.js"></script>
+
+		<script>
+
+			// Full list of configuration options available at:
+			// https://github.com/hakimel/reveal.js#configuration
+			Reveal.initialize({
+				controls: true,
+				progress: true,
+				history: true,
+				center: true,
+
+				transition: 'zoom', // none/fade/slide/convex/concave/zoom
+
+				// Optional reveal.js plugins
+				dependencies: [
+					{ src: 'lib/js/classList.js', condition: function() { return !document.body.classList; } },
+					{ src: 'plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'plugin/highlight/highlight.js', async: true, condition: function() { return !!document.querySelector( 'pre code' ); }, callback: function() { hljs.initHighlightingOnLoad(); } },
+					{ src: 'plugin/zoom-js/zoom.js', async: true },
+					{ src: 'plugin/notes/notes.js', async: true }
+				]
+			});
+
+		</script>
+
+	</body>
+</html>
