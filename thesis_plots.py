@@ -134,7 +134,7 @@ def granger_causality_test_on_sse_50(func_name):
     index = np.arange(len(results))
     bar_width = 0.8
     for i in range(len(tests)):
-        plt.bar(index, np.asarray(results)[:, i].flatten(), bar_width, color='k', label=tests[i][1])
+        plt.bar(index, np.asarray(results)[:, i].flatten(), bar_width, color='w', label=tests[i][1])
         plt.xlabel('Stock')
         plt.ylabel('$p$ value')
         plt.legend(loc=0)
@@ -477,7 +477,7 @@ def sliding_ratio_window_selection(func_name):
     fig, ax = plt.subplots()
     index = np.arange(len(window_sizes))
     bar_width = 0.8
-    plt.bar(index, np.asarray(window_sizes), bar_width, color='k', label='Window size')
+    plt.bar(index, np.asarray(window_sizes), bar_width, color='w', label='Window size')
     plt.xlabel('Stock')
     plt.ylabel('Window size')
     plt.legend(loc=0)
@@ -556,7 +556,7 @@ def price_click_count_granger_on_sse_50(func_name):
     index = np.arange(len(results))
     bar_width = 0.8
     for i in range(len(tests)):
-        plt.bar(index, np.asarray(results)[:, i].flatten(), bar_width, color='k', label=tests[i][1])
+        plt.bar(index, np.asarray(results)[:, i].flatten(), bar_width, color='w', label=tests[i][1])
         plt.xlabel('Stock')
         plt.ylabel('$p$ value')
         plt.legend(loc=0)
@@ -644,7 +644,7 @@ def price_click_count_positive_granger_on_sse_50(func_name):
     index = np.arange(len(results))
     bar_width = 0.8
     for i in range(len(tests)):
-        plt.bar(index, np.asarray(results)[:, i].flatten(), bar_width, color='k', label=tests[i][1])
+        plt.bar(index, np.asarray(results)[:, i].flatten(), bar_width, color='w', label=tests[i][1])
         plt.xlabel('Stock')
         plt.ylabel('$p$ value')
         plt.legend(loc=0)
@@ -652,5 +652,9 @@ def price_click_count_positive_granger_on_sse_50(func_name):
         plt.clf()
 
 if __name__ == '__main__':
-    for i in all_plots:
-        i()
+    # for i in all_plots:
+    #     i()
+    granger_causality_test_on_sse_50()
+    sliding_ratio_window_selection()
+    price_click_count_granger_on_sse_50()
+    price_click_count_positive_granger_on_sse_50()
