@@ -652,9 +652,5 @@ def price_click_count_positive_granger_on_sse_50(func_name):
         plt.clf()
 
 if __name__ == '__main__':
-    # for i in all_plots:
-    #     i()
-    granger_causality_test_on_sse_50()
-    sliding_ratio_window_selection()
-    price_click_count_granger_on_sse_50()
-    price_click_count_positive_granger_on_sse_50()
+    for i in all_plots:
+        i()
