@@ -2,6 +2,7 @@
 \usepackage[fontset=adobe]{ctex}
 \usetheme{Boadilla}
 \setbeamercovered{dynamic}
+\beamertemplatenavigationsymbolsempty
 \title{基于公众关注度的股票市场的分析与预测}
 \subtitle{综合论文训练答辩}
 \author{李雨田}
@@ -53,6 +54,20 @@
 \end{itemize}
 \end{frame}
 
+\begin{frame}{数据来源}{示例}
+\begin{figure}
+  \includegraphics[width=0.6\textwidth]{plots/volume_and_click_count.pdf}
+  \caption{浦发银行 (600000) 成交量与讨论帖点击量关系}
+\end{figure}
+\end{frame}
+
+\begin{frame}{数据来源}{示例}
+\begin{figure}
+  \includegraphics[width=0.6\textwidth]{plots/price_and_click_count.pdf}
+  \caption{浦发银行 (600000) 价格与讨论帖点击量关系}
+\end{figure}
+\end{frame}
+
 \begin{frame}{情感分析}
 \begin{itemize}
   \item 拼接讨论帖标题和内容，去除非中文字符，使用翻译 API 翻译成英文
@@ -63,7 +78,7 @@
 
 \begin{frame}{情感分析}
 \begin{figure}
-  \includegraphics[width=0.4\textwidth]{0.png}
+  \includegraphics[width=0.4\textwidth]{plots/0.png}
   \caption{情感分析卷积神经网络}
 \end{figure}
 \end{frame}
@@ -79,7 +94,86 @@
 \end{block}
 \end{frame}
 
-\begin{frame}{预测模型}
+\begin{frame}{因果关系分析}{结果}
+\begin{figure}
+  \includegraphics[width=0.6\textwidth]{plots/granger_causality_test_volume_on_sse_50.pdf}
+  \caption{上证 50 成交量与讨论帖点击量格兰杰因果关系检验}
+\end{figure}
+\end{frame}
+
+\begin{frame}{因果关系分析}{结果}
+\begin{figure}
+  \includegraphics[width=0.6\textwidth]{plots/granger_causality_test_price_on_sse_50.pdf}
+  \caption{上证 50 价格与讨论帖点击量格兰杰因果关系检验}
+\end{figure}
+\end{frame}
+
+\begin{frame}{因果关系分析}{结果}
+\begin{figure}
+  \includegraphics[width=0.6\textwidth]{plots/granger_causality_test_price_positive_on_sse_50.pdf}
+  \caption{上证 50 价格与积极讨论帖点击量格兰杰因果关系检验}
+\end{figure}
+\end{frame}
+
+\begin{frame}{预测模型}{向量自回归模型}
+\begin{block}{定义}
+  \[
+    y_{t}=c+A_{1}y_{t-1}+A_{2}y_{t-2}+\cdots +A_{p}y_{t-p}+e_{t}
+  \]
+\end{block}
+\end{frame}
+
+\begin{frame}{预测模型}{框架}
+\begin{itemize}
+  \item 数据预处理
+  \pause
+  \begin{itemize}
+    \item 计算量比
+  \end{itemize}
+  \pause
+  \item 落后期选择
+  \pause
+  \begin{itemize}
+    \item Akaike information criterion
+    \pause
+    \item Bayesian information criterion
+    \pause
+    \item Final prediction error
+    \pause
+    \item Hannan-Quinn information criterion
+  \end{itemize}
+  \pause
+  \item 步长选择
+\end{itemize}
+\end{frame}
+
+\begin{frame}{预测模型}{结果}
+\begin{block}{定义}
+  \[
+    \operatorname{RMSE}=\sqrt{\frac{\sum_{i=1}^{n}(\hat{y}_{i}-y_{i})^{2}}{n}}
+  \]
+  \[
+    \operatorname{NRMSE}=\frac{\operatorname{RMSE}}{y_{max}-y_{min}}
+  \]
+\end{block}
+\end{frame}
+
+\begin{frame}{预测模型}{结果}
+以下结果中有 $NRMSE=5.857\times 10^{-2}$ 。
+
+\begin{figure}
+  \includegraphics[width=0.6\textwidth]{plots/volume_forecast_regression_line.pdf}
+  \caption{招商银行 (600036) 成交量预测}
+\end{figure}
+\end{frame}
+
+\begin{frame}{预测模型}{结果}
+以下结果中有 $NRMSE=2.546\times 10^{-2}$ 。
+
+\begin{figure}
+  \includegraphics[width=0.6\textwidth]{plots/price_forecast_regression_line.pdf}
+  \caption{招商银行 (600036) 价格预测}
+\end{figure}
 \end{frame}
 
 \end{document}
