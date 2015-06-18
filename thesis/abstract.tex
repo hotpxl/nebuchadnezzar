@@ -1,15 +1,15 @@
 \begin{cabstract}
-  本文通过公众关注度信息对股票市场进行分析预测。本文基于异步事件循环机制实现了公众关注度数据采集及预处理系统，并利用整合数据及相关数学模型搭建分析预测平台，分析东方财富网股吧讨论帖点击量与股票成交量和价格的关系。本文通过引入情感极性分析提取讨论帖点击量中的情感因素，进一步得到基于公众关注度的股票市场的预测模型。
+  本文通过公众关注度信息对股票市场进行分析预测。本文首先基于异步事件循环机制实现了公众关注度数据采集及预处理系统，能够高效抓取网络公众关注度数据，经过预处理序列化成通用的数据结构。通过抓取东方财富网股吧讨论区数据，然后利用整合数据及相关数学模型搭建基于 Pandas 和 StatsModels 的分析预测平台，分析论帖点击量与股票成交量和价格的关系。例如使用格兰杰因果关系检验发现内在相关关系，使用向量自回归模型进行回归拟合。本文还通过引入基于神经网络模型的情感极性分析提取讨论帖点击量中的情感因素，得到公众关注度信息中的各情感成分。使用以上数据进一步得到基于公众关注度的股票市场的预测模型。
 
-  实验结果表明，公众关注度对股票市场成交量与价格有很强的格兰杰因果关系。并且结合情感信息，可以构建出相对精确的预测模型。
+  实验结果表明，公众关注度对股票市场成交量与价格有很强的格兰杰因果关系，基于该关系可以构建出回归预测模型。结合公众关注度情感信息及其各情感分量，可以优化构建出相对精确的股票市场成交量与价格的预测模型。
 \end{cabstract}
 
 \ckeywords{股票市场, 成交量, 价格, 预测, 公众关注度}
 
 \begin{eabstract}
-  This paper utilizes public attention to analyze the stock market. Based on event driven architecture, this paper implements a data collection and preprocessing system. Aggregated data and relevant mathematical models are used to implement a prediction platform, and analyze the relationship between click count of Guba posts and the stock market. This paper also takes advantage of sentiment analysis tool to extract sentiment components from data, to construct a predction model for the stock market.
+  This paper utilizes public attention to analyze the stock market. Based on event driven architecture, this paper implements a data collection and preprocessing system, capable of highly efficient scraping of public attention data on the Internet. After preprocessing, the data is serialized into general data structure. Guba posts and the stock market are collected and aggregated, combined with mathematical models. I constructed an analysis and prediction platform based on Pandas and StatsModels, which is able to analyze the relationship between click count and the stock market. For example, Granger causality test is used to discover correlation relationship, and vector auto regression model is used for regression analysis. This paper also takes advantage of sentiment analysis tool, which is based on convolutional neural networks, to extract sentiment components from data, obtaining different sentiment components in public attention. All data is used to construct a predction model for the stock market.
 
-  As shown by the result, public attention holds a strong Granger causality towards trading volume and prices. Combined with sentimental data, a rather accurate prediction model could be constructed.
+  As shown by the result, public attention holds a strong Granger causality towards trading volume and prices. It is possible to construct a regression prediction model based on this relationship. Combined with sentimental data, a rather accurate prediction model could be constructed.
 \end{eabstract}
 
 \ekeywords{stock market, volume, price, prediction, public focus}
