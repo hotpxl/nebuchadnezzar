@@ -33,7 +33,7 @@ class Capturing(list):
         sys.stdout = self._stdout
 
 @register_plot
-def auto_regression_0(func_name):
+def click_count_volume_line(func_name):
     fig, ax0 = plt.subplots()
     ax1 = ax0.twinx()
     lines = []
@@ -76,7 +76,7 @@ def granger_causality_test_0(func_name):
     print('\n'.join(output))
 
 @register_plot
-def granger_causality_test_1(func_name):
+def click_count_volume_granger_causality_test(func_name):
     d = stats.data.get_merged_old('600000', 'volume', 'readCount')
     max_lag = 5
     res = statsmodels.tsa.api.stattools.\
@@ -105,7 +105,7 @@ def granger_causality_test_1(func_name):
     plt.savefig('thesis/plots/{}.pdf'.format(func_name))
 
 @register_plot
-def granger_causality_test_on_sse_50(func_name):
+def click_count_volume_granger_causality_test_on_sse_50(func_name):
     results = []
     tests = [
         ('ssr_ftest', 'SSR $F$ test'),
@@ -242,7 +242,7 @@ def var_forecast(func_name):
     print(results.summary())
 
 @register_plot
-def var_forecast_regression_line(func_name):
+def click_count_forecast_volume(func_name):
     d = stats.data.get_merged_old(600036, 'date', 'volume', 'readCount')
     volume = d[:, 1].astype(float)
     click_count = d[:, 2].astype(float)
@@ -651,6 +651,84 @@ def price_click_count_positive_granger_on_sse_50(func_name):
         plt.savefig('thesis/plots/{}_{}.pdf'.format(func_name, tests[i][0]))
         plt.clf()
 
+@register_plot
+def positive_click_count_forecast_price(func_name):
+    d = stats.data.get_merged_old(600036, 'date', 'close', 'readCount')
+    ds = stats.data.get_merged(600036, 'positiveCount', 'negativeCount')
+    price = d[:, 1].astype(float)
+    click_count = np.multiply(ds[:, 0].astype(float) /
+            (ds[:, 0] + ds[:, 1]).astype(float), d[:, 2].astype(float))
+    dates = [datetime.datetime.strptime(i, '%Y-%m-%d') for i in d[:, 0]]
+    data = pandas.DataFrame({
+        'price': price,
+        'clickCount': click_count
+    })
+    data.index = pandas.DatetimeIndex(d[:, 0].astype(str))
+    model = statsmodels.tsa.api.VAR(data)
+    lag = model.select_order(verbose=False)['hqic']
+    length = data.values.shape[0]
+    results = model.fit(ic='hqic')
+    prediction = [0] * (lag)
+    for j in range(lag, length):
+        prediction.append(results.forecast(data.values[j - lag: j], 1)[0][1])
+    cnt = 0
+    for j in range(lag, length):
+        diff = prediction[j] - price[j]
+        cnt += diff ** 2
+    print(math.sqrt(cnt / (length - lag)) / (max(price) - min(price)))
+    fig, ax = plt.subplots()
+    ax.fmt_xdata = matplotlib.dates.DateFormatter('%Y-%m-%d')
+    fig.autofmt_xdate()
+    dates = dates[lag:]
+    prediction = prediction[lag:]
+    price = price[lag:]
+    ax.plot(dates, price, 'k-', label='Real')
+    ax.plot(dates, prediction, 'k--', label='Prediction')
+    ax.set_ylabel('Price')
+    ax.set_xlabel('Date')
+    ax.grid()
+    ax.legend(loc=0)
+    plt.tight_layout()
+    plt.savefig('thesis/plots/{}.pdf'.format(func_name))
+
+@register_plot
+def positive_click_count_forecast_price_on_sse_50(func_name):
+    res = []
+    for index in stats.data.sse_indices():
+        d = stats.data.get_merged_old(index, 'date', 'close', 'readCount')
+        ds = stats.data.get_merged(index, 'positiveCount', 'negativeCount')
+        price = d[:, 1].astype(float)
+        click_count = np.multiply(ds[:, 0].astype(float) /
+                (ds[:, 0] + ds[:, 1]).astype(float), d[:, 2].astype(float))
+        dates = [datetime.datetime.strptime(i, '%Y-%m-%d') for i in d[:, 0]]
+        data = pandas.DataFrame({
+            'price': price,
+            'clickCount': click_count
+        })
+        data.index = pandas.DatetimeIndex(d[:, 0].astype(str))
+        model = statsmodels.tsa.api.VAR(data)
+        lag = model.select_order(verbose=False)['hqic']
+        length = data.values.shape[0]
+        results = model.fit(ic='hqic')
+        prediction = [0] * (lag)
+        for j in range(lag, length):
+            prediction.append(results.forecast(
+                data.values[j - lag: j], 1)[0][1])
+        cnt = 0
+        for j in range(lag, length):
+            diff = prediction[j] - price[j]
+            cnt += diff ** 2
+        res.append(math.sqrt(cnt / (length - lag)) / (max(price) - min(price)))
+    fig, ax = plt.subplots()
+    index = np.arange(len(res))
+    bar_width = 0.8
+    plt.bar(index, np.asarray(res), bar_width, color='w', label='NRMSE')
+    plt.xlabel('Stock')
+    plt.ylabel('NRMSE')
+    plt.legend(loc=0)
+    plt.savefig('thesis/plots/{}.pdf'.format(func_name))
+
 if __name__ == '__main__':
-    for i in all_plots:
-        i()
+    all_plots[-1]()
+    ## for i in all_plots:
+    ##     i()
