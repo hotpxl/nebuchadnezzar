@@ -614,7 +614,7 @@ parameter F test:         F=2.1061  , p=0.0629  , df_denom=689, df_num=5
 
 \begin{figure}
   \centering
-  \includegraphics[width=0.9\textwidth]{plots/granger_causality_test_on_sse_50_abnormal_granger.pdf}
+  \includegraphics[width=0.9\textwidth]{plots/click_count_volume_granger_causality_test_on_sse_50_abnormal.pdf}
   \caption{中国石化 (600028) 成交量与讨论帖点击量格兰杰因果关系检验 $p$ 值}
   \label{granger_causality_test_on_sse_50_abnormal:1}
 \end{figure}
@@ -623,7 +623,7 @@ parameter F test:         F=2.1061  , p=0.0629  , df_denom=689, df_num=5
 
 \begin{figure}
   \centering
-  \includegraphics[width=0.9\textwidth]{plots/granger_causality_test_on_sse_50_abnormal_plot.pdf}
+  \includegraphics[width=0.9\textwidth]{plots/click_count_volume_granger_causality_test_on_sse_50_abnormal_line.pdf}
   \caption{中国石化 (600028) 成交量与讨论帖点击量关系}
   \label{granger_causality_test_on_sse_50_abnormal:2}
 \end{figure}
@@ -678,7 +678,7 @@ parameter F test:         F=2.1061  , p=0.0629  , df_denom=689, df_num=5
 
 \begin{figure}
   \centering
-  \includegraphics[width=0.9\textwidth]{plots/var_forecast_history_line.pdf}
+  \includegraphics[width=0.9\textwidth]{plots/click_count_volume_line_to_forecast.pdf}
   \caption{招商银行 (600036) 成交量与讨论帖点击量关系}
   \label{forecast:0}
 \end{figure}
@@ -810,7 +810,7 @@ results = model.fit(ic='hqic')
 
 \begin{figure}
   \centering
-  \includegraphics[width=0.9\textwidth]{plots/var_forecast_regression_line_5_step.pdf}
+  \includegraphics[width=0.9\textwidth]{plots/click_count_step_5_forecast_volume.pdf}
   \caption{招商银行 (600036) 步长 $5$ 时成交量预测}
   \label{forecast:9}
 \end{figure}
@@ -838,7 +838,7 @@ results = model.fit(ic='hqic')
 
 \begin{figure}
   \centering
-  \includegraphics[width=0.9\textwidth]{plots/sliding_ratio_line.pdf}
+  \includegraphics[width=0.9\textwidth]{plots/click_count_volume_sliding_ratio_line.pdf}
   \caption{招商银行 (600036) 滑动窗口大小 $5$ 时量比}
   \label{sliding_window:0}
 \end{figure}
@@ -849,7 +849,7 @@ results = model.fit(ic='hqic')
 
 \begin{figure}
   \centering
-  \includegraphics[width=0.9\textwidth]{plots/sliding_ratio_forecast.pdf}
+  \includegraphics[width=0.9\textwidth]{plots/click_count_forecast_volume_sliding_ratio.pdf}
   \caption{招商银行 (600036) 滑动窗口大小 $5$ 时成交量预测结果}
   \label{sliding_window:1}
 \end{figure}
@@ -969,7 +969,7 @@ results = model.fit(ic='hqic')
 
 \begin{figure}
   \centering
-  \includegraphics[width=0.9\textwidth]{plots/sliding_ratio_window_selection.pdf}
+  \includegraphics[width=0.9\textwidth]{plots/sliding_ratio_window_selection_on_sse_50.pdf}
   \caption{上证 50 最佳窗口大小}
   \label{sliding_window:4}
 \end{figure}
@@ -984,7 +984,7 @@ results = model.fit(ic='hqic')
 
 \begin{figure}
   \centering
-  \includegraphics[width=0.9\textwidth]{plots/price_click_count_line.pdf}
+  \includegraphics[width=0.9\textwidth]{plots/click_count_price_line.pdf}
   \caption{浦发银行 (600000) 价格与讨论帖点击量关系}
   \label{price_click_count:0}
 \end{figure}
@@ -1082,28 +1082,28 @@ parameter F test:         F=0.8507  , p=0.5140  , df_denom=689, df_num=5
 
 \begin{figure}
   \centering
-  \includegraphics[width=0.9\textwidth]{plots/price_click_count_granger_on_sse_50_lrtest.pdf}
+  \includegraphics[width=0.9\textwidth]{plots/click_count_price_granger_causality_test_on_sse_50_lrtest.pdf}
   \caption{上证 50 价格与讨论帖点击量似然比检验}
   \label{price_click_count:3}
 \end{figure}
 
 \begin{figure}
   \centering
-  \includegraphics[width=0.9\textwidth]{plots/price_click_count_granger_on_sse_50_params_ftest.pdf}
+  \includegraphics[width=0.9\textwidth]{plots/click_count_price_granger_causality_test_on_sse_50_params_ftest.pdf}
   \caption{上证 50 价格与讨论帖点击量参数 $F$ 检验}
   \label{price_click_count:4}
 \end{figure}
 
 \begin{figure}
   \centering
-  \includegraphics[width=0.9\textwidth]{plots/price_click_count_granger_on_sse_50_ssr_chi2test.pdf}
+  \includegraphics[width=0.9\textwidth]{plots/click_count_price_granger_causality_test_on_sse_50_ssr_chi2test.pdf}
   \caption{上证 50 价格与讨论帖点击量残差平方和 $\chi^{2}$ 检验}
   \label{price_click_count:5}
 \end{figure}
 
 \begin{figure}
   \centering
-  \includegraphics[width=0.9\textwidth]{plots/price_click_count_granger_on_sse_50_ssr_ftest.pdf}
+  \includegraphics[width=0.9\textwidth]{plots/click_count_price_granger_causality_test_on_sse_50_ssr_ftest.pdf}
   \caption{上证 50 价格与讨论帖点击量残差平方和 $F$ 检验}
   \label{price_click_count:6}
 \end{figure}
@@ -1145,7 +1145,7 @@ def analysis_worker(i):
 
 \begin{figure}
   \centering
-  \includegraphics[width=0.9\textwidth]{plots/price_click_count_positive_line.pdf}
+  \includegraphics[width=0.9\textwidth]{plots/positive_click_count_price_line.pdf}
   \caption{浦发银行 (600000) 价格与积极讨论帖点击量关系}
   \label{price_click_count:7}
 \end{figure}
@@ -1251,28 +1251,28 @@ parameter F test:         F=1.3891  , p=0.2262  , df_denom=689, df_num=5
 
 \begin{figure}
   \centering
-  \includegraphics[width=0.9\textwidth]{plots/price_click_count_positive_granger_on_sse_50_lrtest.pdf}
+  \includegraphics[width=0.9\textwidth]{plots/positive_click_count_price_granger_causality_test_on_sse_50_lrtest.pdf}
   \caption{上证 50 价格与积极讨论帖点击量似然比检验}
   \label{price_click_count:10}
 \end{figure}
 
 \begin{figure}
   \centering
-  \includegraphics[width=0.9\textwidth]{plots/price_click_count_positive_granger_on_sse_50_params_ftest.pdf}
+  \includegraphics[width=0.9\textwidth]{plots/positive_click_count_price_granger_causality_test_on_sse_50_params_ftest.pdf}
   \caption{上证 50 价格与积极讨论帖点击量参数 $F$ 检验}
   \label{price_click_count:11}
 \end{figure}
 
 \begin{figure}
   \centering
-  \includegraphics[width=0.9\textwidth]{plots/price_click_count_positive_granger_on_sse_50_ssr_chi2test.pdf}
+  \includegraphics[width=0.9\textwidth]{plots/positive_click_count_price_granger_causality_test_on_sse_50_ssr_chi2test.pdf}
   \caption{上证 50 价格与积极讨论帖点击量残差平方和 $\chi^{2}$ 检验}
   \label{price_click_count:12}
 \end{figure}
 
 \begin{figure}
   \centering
-  \includegraphics[width=0.9\textwidth]{plots/price_click_count_positive_granger_on_sse_50_ssr_ftest.pdf}
+  \includegraphics[width=0.9\textwidth]{plots/positive_click_count_price_granger_causality_test_on_sse_50_ssr_ftest.pdf}
   \caption{上证 50 价格与积极讨论帖点击量残差平方和 $F$ 检验}
   \label{price_click_count:13}
 \end{figure}

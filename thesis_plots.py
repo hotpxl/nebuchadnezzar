@@ -55,7 +55,7 @@ def click_count_volume_line(func_name):
     plt.savefig('thesis/plots/{}.pdf'.format(func_name))
 
 @register_plot
-def auto_regression_1(func_name):
+def click_count_volume_lag_selection(func_name):
     d = stats.data.get_merged('600000', 'date', 'volume', 'clickCount')
     volume = d[:, 1].astype(float)
     click_count = d[:, 2].astype(float)
@@ -68,7 +68,7 @@ def auto_regression_1(func_name):
     print('\n'.join(output))
 
 @register_plot
-def granger_causality_test_0(func_name):
+def click_count_volume_granger_causality_test_result(func_name):
     d = stats.data.get_merged_old('600000', 'volume', 'readCount')
     with Capturing() as output:
         statsmodels.tsa.api.stattools.\
@@ -142,7 +142,7 @@ def click_count_volume_granger_causality_test_on_sse_50(func_name):
         plt.clf()
 
 @register_plot
-def granger_causality_test_on_sse_50_abnormal_lag_selection(func_name):
+def click_count_volume_granger_causality_test_on_sse_50_abnormal_lag_selection(func_name):
     d = stats.data.get_merged_old('600028', 'date', 'volume', 'readCount')
     volume = d[:, 1].astype(float)
     click_count = d[:, 2].astype(float)
@@ -155,7 +155,7 @@ def granger_causality_test_on_sse_50_abnormal_lag_selection(func_name):
     print('\n'.join(output))
 
 @register_plot
-def granger_causality_test_on_sse_50_abnormal_granger(func_name):
+def click_count_volume_granger_causality_test_on_sse_50_abnormal(func_name):
     d = stats.data.get_merged_old('600028', 'volume', 'readCount')
     max_lag = 10
     res = statsmodels.tsa.api.stattools.\
@@ -184,7 +184,7 @@ def granger_causality_test_on_sse_50_abnormal_granger(func_name):
     plt.savefig('thesis/plots/{}.pdf'.format(func_name))
 
 @register_plot
-def granger_causality_test_on_sse_50_abnormal_plot(func_name):
+def click_count_volume_granger_causality_test_on_sse_50_abnormal_line(func_name):
     fig, ax0 = plt.subplots()
     ax1 = ax0.twinx()
     lines = []
@@ -206,7 +206,7 @@ def granger_causality_test_on_sse_50_abnormal_plot(func_name):
     plt.savefig('thesis/plots/{}.pdf'.format(func_name))
 
 @register_plot
-def var_forecast_history_line(func_name):
+def click_count_volume_line_to_forecast(func_name):
     fig, ax0 = plt.subplots()
     ax1 = ax0.twinx()
     lines = []
@@ -228,7 +228,7 @@ def var_forecast_history_line(func_name):
     plt.savefig('thesis/plots/{}.pdf'.format(func_name))
 
 @register_plot
-def var_forecast(func_name):
+def click_count_volume_var(func_name):
     d = stats.data.get_merged_old(600036, 'date', 'volume', 'readCount')
     volume = d[:, 1].astype(float)
     click_count = d[:, 2].astype(float)
@@ -277,7 +277,7 @@ def click_count_forecast_volume(func_name):
     plt.savefig('thesis/plots/{}.pdf'.format(func_name))
 
 @register_plot
-def var_forecast_regression_line_5_step(func_name):
+def click_count_step_5_forecast_volume(func_name):
     d = stats.data.get_merged_old(600036, 'date', 'volume', 'readCount')
     volume = d[:, 1].astype(float)
     click_count = d[:, 2].astype(float)
@@ -315,7 +315,7 @@ def var_forecast_regression_line_5_step(func_name):
     plt.savefig('thesis/plots/{}.pdf'.format(func_name))
 
 @register_plot
-def sliding_ratio_line(func_name):
+def click_count_volume_sliding_ratio_line(func_name):
     d = stats.data.get_merged_old(600036, 'date', 'volume', 'readCount')
     window_size = 7
     dates = [datetime.datetime.strptime(i, '%Y-%m-%d') for i in d[:, 0]]
@@ -340,7 +340,7 @@ def sliding_ratio_line(func_name):
     plt.savefig('thesis/plots/{}.pdf'.format(func_name))
 
 @register_plot
-def sliding_ratio_forecast(func_name):
+def click_count_forecast_volume_sliding_ratio(func_name):
     d = stats.data.get_merged_old(600036, 'date', 'volume', 'readCount')
     window_size = 7
     dates = [datetime.datetime.strptime(i, '%Y-%m-%d') for i in d[:, 0]]
@@ -378,7 +378,7 @@ def sliding_ratio_forecast(func_name):
     plt.savefig('thesis/plots/{}.pdf'.format(func_name))
 
 @register_plot
-def sliding_ratio_forecast(func_name):
+def click_count_forecast_volume_sliding_ratio_compare_window_size(func_name):
     index = 600036
     for window_size in range(2, 11):
         d = stats.data.get_merged_old(index, 'date', 'volume', 'readCount')
@@ -409,7 +409,7 @@ def sliding_ratio_forecast(func_name):
             math.sqrt(cnt / (length - lag)) / (max(volume) - min(volume))))
 
 @register_plot
-def sliding_ratio_forecast_all(func_name):
+def click_count_forecast_volume_sliding_ratio_compare_window_size_on_sse_50(func_name):
     for index in stats.data.sse_indices():
         arr = []
         for window_size in range(2, 11):
@@ -442,7 +442,7 @@ def sliding_ratio_forecast_all(func_name):
         print('{}: {}'.format(index, min(arr, key=lambda x: x[1])))
 
 @register_plot
-def sliding_ratio_window_selection(func_name):
+def sliding_ratio_window_selection_on_sse_50(func_name):
     window_sizes = []
     for index in stats.data.sse_indices():
         arr = []
@@ -484,7 +484,7 @@ def sliding_ratio_window_selection(func_name):
     plt.savefig('thesis/plots/{}.pdf'.format(func_name))
 
 @register_plot
-def price_click_count_line(func_name):
+def click_count_price_line(func_name):
     d = stats.data.get_merged_old('600000', 'date', 'close', 'readCount')
     dates = [datetime.datetime.strptime(i, '%Y-%m-%d') for i in d[:, 0]]
     price = d[:, 1]
@@ -506,7 +506,7 @@ def price_click_count_line(func_name):
     plt.savefig('thesis/plots/{}.pdf'.format(func_name))
 
 @register_plot
-def price_click_count_lag_selection(func_name):
+def click_count_price_lag_selection(func_name):
     d = stats.data.get_merged_old('600000', 'date', 'close', 'readCount')
     close = d[:, 1].astype(float)
     click_count = d[:, 2].astype(float)
@@ -519,7 +519,7 @@ def price_click_count_lag_selection(func_name):
     print('\n'.join(output))
 
 @register_plot
-def price_click_count_granger(func_name):
+def click_count_price_granger_causality_test_result(func_name):
     d = stats.data.get_merged_old('600000', 'close', 'readCount')
     with Capturing() as output:
         statsmodels.tsa.api.stattools.\
@@ -527,7 +527,7 @@ def price_click_count_granger(func_name):
     print('\n'.join(output))
 
 @register_plot
-def price_click_count_granger_on_sse_50(func_name):
+def click_count_price_granger_causality_test_on_sse_50(func_name):
     results = []
     tests = [
         ('ssr_ftest', 'SSR $F$ test'),
@@ -564,7 +564,7 @@ def price_click_count_granger_on_sse_50(func_name):
         plt.clf()
 
 @register_plot
-def price_click_count_positive_line(func_name):
+def positive_click_count_price_line(func_name):
     d = stats.data.get_merged_old('600000', 'date', 'close', 'readCount')
     ds = stats.data.get_merged('600000', 'positiveCount', 'negativeCount')
     dates = [datetime.datetime.strptime(i, '%Y-%m-%d') for i in d[:, 0]]
@@ -589,7 +589,7 @@ def price_click_count_positive_line(func_name):
     plt.savefig('thesis/plots/{}.pdf'.format(func_name))
 
 @register_plot
-def price_click_count_positive_lag_selection(func_name):
+def positive_click_count_price_lag_selection(func_name):
     d = stats.data.get_merged_old('600000', 'date', 'close', 'readCount')
     ds = stats.data.get_merged('600000', 'positiveCount', 'negativeCount')
     close = d[:, 1].astype(float)
@@ -603,7 +603,7 @@ def price_click_count_positive_lag_selection(func_name):
     print('\n'.join(output))
 
 @register_plot
-def price_click_count_positive_granger(func_name):
+def positive_click_count_price_granger_causality_test_result(func_name):
     d = stats.data.get_merged_old('600000', 'close', 'readCount')
     ds = stats.data.get_merged('600000', 'positiveCount', 'negativeCount')
     click_count = np.multiply(ds[:, 0].astype(float) / (ds[:, 0] + ds[:, 1]).astype(float), d[:, 1].astype(float))
@@ -614,7 +614,7 @@ def price_click_count_positive_granger(func_name):
     print('\n'.join(output))
 
 @register_plot
-def price_click_count_positive_granger_on_sse_50(func_name):
+def positive_click_count_price_granger_causality_test_on_sse_50(func_name):
     results = []
     tests = [
         ('ssr_ftest', 'SSR $F$ test'),
@@ -729,6 +729,5 @@ def positive_click_count_forecast_price_on_sse_50(func_name):
     plt.savefig('thesis/plots/{}.pdf'.format(func_name))
 
 if __name__ == '__main__':
-    all_plots[-1]()
-    ## for i in all_plots:
-    ##     i()
+    for i in all_plots:
+        i()
